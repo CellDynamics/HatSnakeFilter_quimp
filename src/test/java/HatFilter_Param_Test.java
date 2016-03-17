@@ -36,6 +36,9 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
  */
 @RunWith(Parameterized.class)
 public class HatFilter_Param_Test {
+    static {
+        System.setProperty("log4j.configurationFile", "hatsnakefilterlog4j2.xml");
+    }
     private static final Logger LOGGER = LogManager.getLogger(HatFilter_Param_Test.class.getName());
     private Integer window;
     private Integer pnum;
@@ -90,15 +93,14 @@ public class HatFilter_Param_Test {
      */
     @Parameterized.Parameters
     public static Collection<Object[]> testFiles() {
-        return Arrays
-                .asList(new Object[][] { { "../src/test/resources/testData_137.dat", 23, 1, 0.0 },
-                        { "../src/test/resources/testData_1.dat", 23, 1, 0.0 },
-                        { "../src/test/resources/testData_125.dat", 23, 1, 0.0 },
-                        { "../src/test/resources/testData_75.dat", 23, 1, 0.0 },
-                        { "../src/test/resources/testData_137.dat", 23, 2, 0.0 },
-                        { "../src/test/resources/testData_1.dat", 23, 2, 0.0 },
-                        { "../src/test/resources/testData_125.dat", 23, 2, 0.0 },
-                        { "../src/test/resources/testData_75.dat", 23, 2, 0.0 } });
+        return Arrays.asList(new Object[][] { { "src/test/resources/testData_137.dat", 23, 1, 0.0 },
+                { "src/test/resources/testData_1.dat", 23, 1, 0.0 },
+                { "src/test/resources/testData_125.dat", 23, 1, 0.0 },
+                { "src/test/resources/testData_75.dat", 23, 1, 0.0 },
+                { "src/test/resources/testData_137.dat", 23, 2, 0.0 },
+                { "src/test/resources/testData_1.dat", 23, 2, 0.0 },
+                { "src/test/resources/testData_125.dat", 23, 2, 0.0 },
+                { "src/test/resources/testData_75.dat", 23, 2, 0.0 } });
     }
 
     /**

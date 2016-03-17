@@ -14,50 +14,22 @@
   <version>1.0.0-SNAPSHOT</version>
   <!-- Name and licencing and other project informations -->
   <name>HatSnakeFilter_quimp</name>
+  <developers>
+    <developer>
+      <id>p.baniukiewicz</id>
+      <name>Piotr Baniukiewicz</name>
+      <email>p.baniukiewicz@warwick.ac.uk</email>
+      <organization>University of Warwick</organization>
+      <roles>
+        <role>developer</role>
+        <role>researcher</role>
+        <role>architect</role>
+      </roles>
+      <timezone>London</timezone>
+    </developer>
+  </developers>
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>uk.ac.warwick.wsbc</groupId>
-                  <artifactId>HatSnakeFilter_quimp</artifactId>
-                  <version>1.0.0-SNAPSHOT</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${basedir}/../target/</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
-        <dependencies>
-          <dependency>
-            <groupId>uk.ac.warwick.wsbc</groupId>
-            <artifactId>quimp-shared-resources</artifactId>
-            <version>1.0.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -67,14 +39,14 @@
       <version>1.11.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
-  <reporting>
+   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>2.17</version>
         <configuration>
-          <configLocation>quimpcheckstyle.xml</configLocation>
+          <configLocation>google_checks.xml</configLocation>
         </configuration>
       </plugin>
       <plugin>
@@ -96,6 +68,17 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>3.6</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <formats>
+            <format>xml</format>
+            <format>html</format>
+          </formats>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>

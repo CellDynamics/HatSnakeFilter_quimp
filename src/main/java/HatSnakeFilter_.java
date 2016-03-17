@@ -121,7 +121,9 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
  */
 public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilter, IPadArray,
         ChangeListener, ActionListener, IQuimpPluginSynchro {
-
+    static {
+        System.setProperty("log4j.configurationFile", "hatsnakefilterlog4j2.xml");
+    }
     private static final Logger LOGGER = LogManager.getLogger(HatSnakeFilter_.class.getName());
     private final int DRAW_SIZE = 200; //!< size of draw area in window
 

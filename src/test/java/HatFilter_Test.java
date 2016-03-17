@@ -32,6 +32,9 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
  */
 public class HatFilter_Test {
 
+    static {
+        System.setProperty("log4j.configurationFile", "hatsnakefilterlog4j2.xml");
+    }
     private static final Logger LOGGER = LogManager.getLogger(HatFilter_Test.class.getName());
     private List<Point2d> input;
     private List<Point2d> lininput; //!< line at 45 deg
@@ -65,9 +68,9 @@ public class HatFilter_Test {
         for (int i = 0; i < 20; i++)
             lininput.add(new Point2d(i, i));
 
-        circ = new DataLoader("../src/test/resources/testData_circle.dat").getData();
+        circ = new DataLoader("src/test/resources/testData_circle.dat").getData();
 
-        prot = new DataLoader("../src/test/resources/testData_prot.dat").getData();
+        prot = new DataLoader("src/test/resources/testData_prot.dat").getData();
     }
 
     @After
