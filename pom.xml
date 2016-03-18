@@ -11,7 +11,7 @@
   <groupId>uk.ac.warwick.wsbc</groupId>
   <artifactId>HatSnakeFilter_quimp</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <!-- Name and licencing and other project informations -->
   <name>HatSnakeFilter_quimp</name>
   <build>
