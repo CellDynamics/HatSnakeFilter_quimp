@@ -2,8 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>uk.ac.warwick.wsbc</groupId>
-  <artifactId>pom-quimp</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+    <artifactId>pom-quimp-plugin</artifactId>
+    <version>1.0.0</version>
     <relativePath/>
     <!-- http://stackoverflow.com/questions/6003831/parent-relativepath-points-at-my-com-mycompanymyproject-instead-of-org-apache -->
   </parent>
@@ -14,32 +14,23 @@
   <version>1.0.0-SNAPSHOT</version>
   <!-- Name and licencing and other project informations -->
   <name>HatSnakeFilter_quimp</name>
-  <developers>
-    <developer>
-      <id>p.baniukiewicz</id>
-      <name>Piotr Baniukiewicz</name>
-      <email>p.baniukiewicz@warwick.ac.uk</email>
-      <organization>University of Warwick</organization>
-      <roles>
-        <role>developer</role>
-        <role>researcher</role>
-        <role>architect</role>
-      </roles>
-      <timezone>London</timezone>
-    </developer>
-  </developers>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
     <dependency>
-      <groupId>uk.ac.warwick.wsbc</groupId>
-      <artifactId>QuimP_</artifactId>
-      <version>16.03.18-SNAPSHOT</version>
+      <groupId>net.imagej</groupId>
+      <artifactId>ij</artifactId>
+      <version>1.50d</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-   <reporting>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
