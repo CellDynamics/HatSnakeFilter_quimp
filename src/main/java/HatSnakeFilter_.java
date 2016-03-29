@@ -585,8 +585,11 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
     public void actionPerformed(ActionEvent e) {
         Object b = e.getSource();
         if (b == applyB) { // pressed apply, copy ui data to plugin
+            // order of these two is important because updateView() externally run the whole
+            // plugin and reconnects external data what updates preview and delete any recalculated
+            // result.
+            qcontext.updateView(); // run whole plugin from BOA context
             recalculatePlugin(); // transfers data from ui to plugin and plot example on screen
-            qcontext.updateView();
         }
     }
 
