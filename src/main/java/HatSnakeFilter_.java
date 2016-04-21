@@ -73,9 +73,9 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
  * -# Forming output table without protrusions.
  * 
  * <H2>First step</H2>
- * The window of size \c window slides over wrapped data. Wrapping is performed by 
+ * The window of size \c window slides over looped data. Looping is performed by 
  * java.util.Collections.rotate method that shift data left copying falling out indexes to end of
- * the set. Finally the window is settled in constant position between indexes <0;window-1>. For 
+ * the set (finally the window is settled in constant position between indexes <0;window-1>). For 
  * each its position \c r the candidate points are deleted from original contour and circularity
  * is computed (see getCircularity(final List<Vector2d>)). Then candidate points are passed to
  * getWeighting(final List<Vector2d>) method where weight is evaluated. The role of weight is to
