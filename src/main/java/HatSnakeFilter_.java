@@ -666,6 +666,11 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
     public void attachContext(ViewUpdater b) {
         qcontext = b;
     }
+
+    @Override
+    public String about() {
+        return "Author: Piotr Baniukiewicz\n" + "mail: p.baniukiewicz@warwick.ac.uk";
+    }
 }
 
 /**
