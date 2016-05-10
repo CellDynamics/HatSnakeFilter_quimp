@@ -486,7 +486,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
      */
     @Override
     public String getVersion() {
-        return "1.0.1-SNAPSHOT";
+        return "1.0.1";
     }
 
     /**
@@ -672,7 +672,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
 
     @Override
     public String about() {
-        return "Author: Piotr Baniukiewicz\n" + "mail: p.baniukiewicz@warwick.ac.uk";
+        return "Delete convexity from outline.\n" + "Author: Piotr Baniukiewicz\n"
+                + "mail: p.baniukiewicz@warwick.ac.uk";
     }
 
     /**
