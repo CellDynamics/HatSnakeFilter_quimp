@@ -8,6 +8,8 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,9 +75,9 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
  * -# Forming output table without protrusions.
  * 
  * <H2>First step</H2>
- * The window of size \c window slides over wrapped data. Wrapping is performed by 
+ * The window of size \c window slides over looped data. Looping is performed by 
  * java.util.Collections.rotate method that shift data left copying falling out indexes to end of
- * the set. Finally the window is settled in constant position between indexes <0;window-1>. For 
+ * the set (finally the window is settled in constant position between indexes <0;window-1>). For 
  * each its position \c r the candidate points are deleted from original contour and circularity
  * is computed (see getCircularity(final List<Vector2d>)). Then candidate points are passed to
  * getWeighting(final List<Vector2d>) method where weight is evaluated. The role of weight is to
@@ -269,8 +271,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
         ArrayList<Double> circsorted = new ArrayList<>(circ); // need sorted but the old one as well
                                                               // to identify windows positions
         circsorted.sort(Collections.reverseOrder()); // sort in descending order
-        LOGGER.debug("cirs: " + circsorted.toString());
-        LOGGER.debug("circ: " + circ.toString());
+        LOGGER.trace("cirs: " + circsorted.toString());
+        LOGGER.trace("circ: " + circ.toString());
 
         if (circsorted.get(0) < alev) // if maximal circularity smaller than acceptance level
             return points; // just return non-modified data;
@@ -311,7 +313,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
                         ind2rem.add(new WindowIndRange(0, window - (points.size() - startpos) - 1));
                     } else
                         ind2rem.add(new WindowIndRange(startpos, startpos + window - 1));
-                    LOGGER.debug("added win for i=" + i + " startpos=" + startpos + " coord:"
+                    LOGGER.trace("added win for i=" + i + " startpos=" + startpos + " coord:"
                             + points.get(startpos).toString());
                     found++;
                     i++;
@@ -328,13 +330,13 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
                     ind2rem.add(new WindowIndRange(0, window - (points.size() - startpos) - 1));
                 } else
                     ind2rem.add(new WindowIndRange(startpos, startpos + window - 1));
-                LOGGER.debug("added win for i=" + i + " startpos=" + startpos + " coord:"
+                LOGGER.trace("added win for i=" + i + " startpos=" + startpos + " coord:"
                         + points.get(startpos).toString());
                 i++;
                 found++;
             }
         }
-        LOGGER.debug("winpos: " + ind2rem.toString());
+        LOGGER.trace("winpos: " + ind2rem.toString());
         // Step 3 - remove selected windows from input data
         // array will be copied to new one skipping points to remove
         for (i = 0; i < points.size(); i++) {
@@ -484,7 +486,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
      */
     @Override
     public String getVersion() {
-        return "1.0.0";
+        return "1.0.1";
     }
 
     /**
@@ -537,6 +539,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
 
         pluginPanel.add(jp, BorderLayout.CENTER); // add in center position (in place of help zone)
         pluginWnd.pack();
+        pluginWnd.addWindowListener(new HatWindowAdapter()); // add listener for winodw activation
     }
 
     /**
@@ -585,8 +588,11 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
     public void actionPerformed(ActionEvent e) {
         Object b = e.getSource();
         if (b == applyB) { // pressed apply, copy ui data to plugin
+            // order of these two is important because updateView() externally run the whole
+            // plugin and reconnects external data what updates preview and delete any recalculated
+            // result.
+            qcontext.updateView(); // run whole plugin from BOA context
             recalculatePlugin(); // transfers data from ui to plugin and plot example on screen
-            qcontext.updateView();
         }
     }
 
@@ -662,6 +668,35 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
     @Override
     public void attachContext(ViewUpdater b) {
         qcontext = b;
+    }
+
+    @Override
+    public String about() {
+        return "Delete convexity from outline.\n" + "Author: Piotr Baniukiewicz\n"
+                + "mail: p.baniukiewicz@warwick.ac.uk";
+    }
+
+    /**
+     * Add action on window focus
+     * 
+     * This is used for updating preview screen in plugin. When window became in focus, last snake
+     * stored in ViewUpdater is gathered. This snake is updated on every action in BOA
+     * 
+     * @author p.baniukiewicz
+     * @date 25 Apr 2016
+     *
+     */
+    class HatWindowAdapter extends WindowAdapter {
+        @Override
+        public void windowActivated(WindowEvent e) {
+            points = qcontext.getSnakeasPoints(); // get last snake from ViewUpdater
+            if (points != null) {
+                p = new ExPolygon(points); // create polygon from points
+                p.fitPolygon(DRAW_SIZE); // adjust its size to draw window
+                recalculatePlugin();
+            }
+            super.windowActivated(e);
+        }
     }
 }
 
