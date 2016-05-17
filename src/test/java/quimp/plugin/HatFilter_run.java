@@ -1,4 +1,4 @@
-
+package quimp.plugin;
 /**
  * @file HatFilter_run.java
  * @date 8 Feb 2016
