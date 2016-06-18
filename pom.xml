@@ -3,7 +3,7 @@
   <parent>
     <groupId>uk.ac.warwick.wsbc</groupId>
     <artifactId>pom-quimp-plugin</artifactId>
-    <version>16.06.01</version>
+    <version>16.08.01-SNAPSHOT</version>
     <relativePath/>
     <!-- http://stackoverflow.com/questions/6003831/parent-relativepath-points-at-my-com-mycompanymyproject-instead-of-org-apache -->
   </parent>
