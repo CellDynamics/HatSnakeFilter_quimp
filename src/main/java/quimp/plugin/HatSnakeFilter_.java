@@ -488,7 +488,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
      */
     @Override
     public String getVersion() {
-        return "1.0.2-SNAPSHOT";
+        return "1.0.2";
     }
 
     /**
