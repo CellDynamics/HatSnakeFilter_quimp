@@ -1,4 +1,4 @@
-
+package quimp.plugin;
 /**
  * @file HatFilter_Param_Test.java
  * @date 25 Jan 2016
@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import quimp.plugin.HatSnakeFilter_;
 import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
 import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.DataLoader;

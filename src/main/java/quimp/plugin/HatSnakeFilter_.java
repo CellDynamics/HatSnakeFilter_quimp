@@ -1,3 +1,5 @@
+package quimp.plugin;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -486,7 +488,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
      */
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.2";
     }
 
     /**
@@ -662,6 +664,13 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
                 g.setColor(Color.RED);
                 g.drawPolygon(pout); // draw output polygon (processed)
             }
+            if (points == null || pout == null) { // clera if there is no valid data
+                g.setColor(Color.BLACK);
+                g.clearRect(0, 0, DRAW_SIZE, DRAW_SIZE);
+                g.fillRect(0, 0, DRAW_SIZE, DRAW_SIZE);
+                g.setColor(Color.WHITE);
+            }
+
         }
     }
 
@@ -680,7 +689,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
      * Add action on window focus
      * 
      * This is used for updating preview screen in plugin. When window became in focus, last snake
-     * stored in ViewUpdater is gathered. This snake is updated on every action in BOA
+     * stored in ViewUpdater is gathered. This snake is updated on every action in BOA.
+     * Data from ViewUpdater may be null if user deleted Snake. If there is more snakes on screen
+     * after deleting Snake id=n, active became Snake id=n-1
      * 
      * @author p.baniukiewicz
      * @date 25 Apr 2016
@@ -694,6 +705,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
                 p = new ExPolygon(points); // create polygon from points
                 p.fitPolygon(DRAW_SIZE); // adjust its size to draw window
                 recalculatePlugin();
+            } else { // if data from ViewUpdater are null, invalidate output as well and clear view
+                pout = null;
+                dp.repaint();
             }
             super.windowActivated(e);
         }
