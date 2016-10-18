@@ -3,7 +3,7 @@
   <parent>
     <groupId>uk.ac.warwick.wsbc</groupId>
     <artifactId>pom-quimp-plugin</artifactId>
-    <version>16.08.01-SNAPSHOT</version>
+    <version>16.10.01</version>
     <relativePath/>
     <!-- http://stackoverflow.com/questions/6003831/parent-relativepath-points-at-my-com-mycompanymyproject-instead-of-org-apache -->
   </parent>
@@ -21,18 +21,18 @@
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
       <plugin>
-      <groupId>org.jacoco</groupId>
-      <artifactId>jacoco-maven-plugin</artifactId>
-      <version>0.7.6.201602180812</version>
-      <executions>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.6.201602180812</version>
+        <executions>
           <execution>
-          <id>default-prepare-agent</id>
-          <goals>
+            <id>default-prepare-agent</id>
+            <goals>
               <goal>prepare-agent</goal>
-          </goals>
+            </goals>
           </execution>
-      </executions>
-    </plugin>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -74,11 +74,10 @@
         <version>3.6</version>
       </plugin>
       <plugin>
-    <groupId>org.jacoco</groupId>
-    <artifactId>jacoco-maven-plugin</artifactId>
-    <version>0.7.6.201602180812</version>
-</plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.6.201602180812</version>
+      </plugin>
     </plugins>
   </reporting>
-  
 </project>
