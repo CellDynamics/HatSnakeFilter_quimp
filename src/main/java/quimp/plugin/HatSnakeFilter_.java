@@ -37,7 +37,7 @@ import uk.ac.warwick.wsbc.QuimP.geom.BasicPolygons;
 import uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPluginSynchro;
 import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
 import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
-import uk.ac.warwick.wsbc.QuimP.plugin.snakes.IQuimpPoint2dFilter;
+import uk.ac.warwick.wsbc.QuimP.plugin.snakes.IQuimpBOAPoint2dFilter;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.IPadArray;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
 
@@ -124,7 +124,7 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
  * @date 25 Jan 2016 First version
  * @date 03 Jan 2016 Modified algorithm
  */
-public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilter, IPadArray,
+public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dFilter, IPadArray,
         ChangeListener, ActionListener, IQuimpPluginSynchro {
     static {
         if (System.getProperty("quimp.debugLevel") == null)
@@ -429,7 +429,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
      * capabilities.
      * 
      * @return Configuration codes
-     * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPlugin
+     * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpCorePlugin
      * @see uk.ac.warwick.wsbc.plugin.IQuimpPlugin.setup()
      */
     @Override
