@@ -30,13 +30,14 @@ import javax.vecmath.Vector2d;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import uk.ac.warwick.wsbc.QuimP.ViewUpdater;
 import uk.ac.warwick.wsbc.QuimP.geom.BasicPolygons;
 import uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPluginSynchro;
 import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
 import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
-import uk.ac.warwick.wsbc.QuimP.plugin.snakes.IQuimpPoint2dFilter;
+import uk.ac.warwick.wsbc.QuimP.plugin.snakes.IQuimpBOAPoint2dFilter;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.IPadArray;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
 
@@ -123,10 +124,13 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
  * @date 25 Jan 2016 First version
  * @date 03 Jan 2016 Modified algorithm
  */
-public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilter, IPadArray,
+public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dFilter, IPadArray,
         ChangeListener, ActionListener, IQuimpPluginSynchro {
     static {
-        System.setProperty("log4j.configurationFile", "hatsnakefilterlog4j2.xml");
+        if (System.getProperty("quimp.debugLevel") == null)
+            Configurator.initialize(null, "log4j2_default.xml");
+        else
+            Configurator.initialize(null, System.getProperty("quimp.debugLevel"));
     }
     private static final Logger LOGGER = LogManager.getLogger(HatSnakeFilter_.class.getName());
     private final int DRAW_SIZE = 200; //!< size of draw area in window
@@ -425,7 +429,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpPoint2dFilt
      * capabilities.
      * 
      * @return Configuration codes
-     * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPlugin
+     * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpCorePlugin
      * @see uk.ac.warwick.wsbc.plugin.IQuimpPlugin.setup()
      */
     @Override
