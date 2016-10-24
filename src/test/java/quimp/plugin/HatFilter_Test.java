@@ -11,16 +11,14 @@ import java.util.TreeSet;
 
 import javax.vecmath.Point2d;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import quimp.plugin.HatFilter_run;
-import quimp.plugin.HatSnakeFilter_;
 import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
 import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.DataLoader;
@@ -35,16 +33,13 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
  */
 public class HatFilter_Test {
 
-    static {
-        System.setProperty("log4j.configurationFile", "hatsnakefilterlog4j2.xml");
-    }
-    private static final Logger LOGGER = LogManager.getLogger(HatFilter_Test.class.getName());
+    static final Logger LOGGER = LoggerFactory.getLogger(HatFilter_Test.class.getName());
     private List<Point2d> input;
     private List<Point2d> lininput; //!< line at 45 deg
     private List<Point2d> circ; //!< circular object <EM>../src/test/resources/HatFilter.m</EM>
     /**
-     * simulated protrusions
-     * %% protrusions - generate test data from <EM>../src/test/resources/HatFilter.m</EM>
+     * simulated protrusions %% protrusions - generate test data from
+     * <EM>../src/test/resources/HatFilter.m</EM>
      */
     private List<Point2d> prot;
 
@@ -83,9 +78,7 @@ public class HatFilter_Test {
     /**
      * @test Test of HatSnakeFilter_.runPlugin()
      * @pre Ideally circular object
-     * @post In logs:
-     * -# Weighting the same
-     * -# circularity the same 
+     * @post In logs: -# Weighting the same -# circularity the same
      * @throws QuimpPluginException
      */
     @SuppressWarnings("serial")
@@ -107,12 +100,12 @@ public class HatFilter_Test {
     /**
      * @test Test of HatSnakeFilter_.runPlugin()
      * @pre Simulated protrusions
-     * @post Logs are comparable with script <EM>../src/test/resources/HatFilter.m</EM>
-     * After run go to folder mentioned above and run 
-     * <EM>%% protrusions - load java results and compare with matlab</EM> to verify results
+     * @post Logs are comparable with script <EM>../src/test/resources/HatFilter.m</EM> After run go
+     *       to folder mentioned above and run <EM>%% protrusions - load java results and compare
+     *       with matlab</EM> to verify results
      * @throws QuimpPluginException
-     * @warning This matlab code is not fully compatible with java. Some results differ
-     * Matlab dont accept windows lying on beginning because they have indexes 1-max.
+     * @warning This matlab code is not fully compatible with java. Some results differ Matlab dont
+     *          accept windows lying on beginning because they have indexes 1-max.
      */
     @SuppressWarnings("serial")
     @Test
@@ -134,10 +127,8 @@ public class HatFilter_Test {
     /**
      * @test Test of HatSnakeFilter_.runPlugin()
      * @pre Linear object
-     * @post In logs:
-     * -# Weighting differ at end
-     * -# circularity differ at end
-     * -# Window is moving and has circular padding
+     * @post In logs: -# Weighting differ at end -# circularity differ at end -# Window is moving
+     *       and has circular padding
      * @throws QuimpPluginException
      */
     @SuppressWarnings("serial")
@@ -339,8 +330,8 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Test of WindowIndRange class
-     * Test if particular point is included in any range stored in TreeSet
+     * @test Test of WindowIndRange class Test if particular point is included in any range stored
+     *       in TreeSet
      */
     @Test
     public void testWindowIndRange_3() {

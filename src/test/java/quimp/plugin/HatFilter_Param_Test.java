@@ -12,15 +12,14 @@ import java.util.List;
 
 import javax.vecmath.Point2d;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import quimp.plugin.HatSnakeFilter_;
 import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
 import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.DataLoader;
@@ -29,18 +28,16 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
 /**
  * Parameterized test for HatFilter
  * 
- * Generates images of processed data as well as images of original data. Those can be viewed in 
+ * Generates images of processed data as well as images of original data. Those can be viewed in
  * <EM>../src/test/resources/HatFilter.m</EM>
+ * 
  * @author p.baniukiewicz
  * @date 25 Jan 2016
  *
  */
 @RunWith(Parameterized.class)
 public class HatFilter_Param_Test {
-    static {
-        System.setProperty("log4j.configurationFile", "hatsnakefilterlog4j2.xml");
-    }
-    private static final Logger LOGGER = LogManager.getLogger(HatFilter_Param_Test.class.getName());
+    static final Logger LOGGER = LoggerFactory.getLogger(HatFilter_Param_Test.class.getName());
     private Integer window;
     private Integer pnum;
     private Double alev;
@@ -50,9 +47,8 @@ public class HatFilter_Param_Test {
     /**
      * Parameterized constructor.
      * 
-     * Each parameter should be placed as an argument here Every time runner
-     * triggers, it will pass the arguments from parameters we defined to this
-     * method
+     * Each parameter should be placed as an argument here Every time runner triggers, it will pass
+     * the arguments from parameters we defined to this method
      * 
      * @param testFileName test file name
      * @param window filter window size
@@ -89,8 +85,7 @@ public class HatFilter_Param_Test {
      * Set of parameters for tests.
      * 
      * @return List of strings with paths to testfiles and smooth parameter
-     * @see QuimP-toolbox/Prototyping/59-Shape_filtering/main.m for creating
-     * *.dat files
+     * @see QuimP-toolbox/Prototyping/59-Shape_filtering/main.m for creating *.dat files
      */
     @Parameterized.Parameters
     public static Collection<Object[]> testFiles() {
@@ -110,7 +105,7 @@ public class HatFilter_Param_Test {
      * @post Save image test_HatFilter_* in /tmp/
      * @throws QuimpPluginException
      * @see QuimP-toolbox/algorithms/src/test/resources/HatFilter.m for verification of logs
-     * (ratios, indexes, etc)
+     *      (ratios, indexes, etc)
      * @see <EM>../src/test/resources/HatFilter.m</EM> for plotting results
      * @see QuimP-toolbox/Prototyping/59-Shape_filtering/main.m for creating *.dat files
      */
@@ -135,7 +130,7 @@ public class HatFilter_Param_Test {
 
     /**
      * @test Simple test of RoiSaver class, create reference images without processing but with the
-     * same name scheme as processed data
+     *       same name scheme as processed data
      * @post Save image in /tmp
      * @see <EM>../src/test/resources/HatFilter.m</EM> for plotting results
      */
