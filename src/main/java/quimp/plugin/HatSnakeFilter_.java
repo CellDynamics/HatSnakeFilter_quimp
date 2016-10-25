@@ -31,6 +31,7 @@ import javax.vecmath.Vector2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.warwick.wsbc.QuimP.PropertyReader;
 import uk.ac.warwick.wsbc.QuimP.ViewUpdater;
 import uk.ac.warwick.wsbc.QuimP.geom.BasicPolygons;
 import uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPluginSynchro;
@@ -471,7 +472,12 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      */
     @Override
     public String getVersion() {
-        return "1.0.2";
+        String trimmedClassName = getClass().getSimpleName();
+        trimmedClassName = trimmedClassName.substring(0, trimmedClassName.length() - 1); // no _
+        // _ at the end of class does not appears in final jar name, we need it to
+        // distinguish between plugins
+        return PropertyReader.readProperty(getClass(), trimmedClassName,
+                "quimp/plugin/plugin.properties", "internalVersion");
     }
 
     /**

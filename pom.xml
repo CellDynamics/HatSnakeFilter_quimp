@@ -25,6 +25,12 @@
     <url>http://www.trac-wsbc.linkpc.net:8080/trac/QuimP/</url>
   </issueManagement>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
