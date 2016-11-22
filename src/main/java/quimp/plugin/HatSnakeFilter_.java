@@ -358,7 +358,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     }
 
     /**
-     * Calculates weighting based on distribution of window points
+     * Calculates weighting based on distribution of window points.
      * 
      * Calculates center of mass of window points and then standard deviations of lengths between
      * this point and every other point. Cumulated distributions like protrusions give smaller
