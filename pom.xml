@@ -4,21 +4,21 @@
     <groupId>uk.ac.warwick.wsbc</groupId>
     <artifactId>pom-quimp-plugin</artifactId>
     <version>16.11.01</version>
-    <relativePath/>
+    <relativePath />
     <!-- http://stackoverflow.com/questions/6003831/parent-relativepath-points-at-my-com-mycompanymyproject-instead-of-org-apache -->
   </parent>
   <!-- Project's coordinates -->
   <groupId>uk.ac.warwick.wsbc</groupId>
   <artifactId>HatSnakeFilter-quimp</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.4</version>
   <!-- Name and licencing and other project informations -->
   <name>HatSnakeFilter-quimp</name>
   <scm>
     <connection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</connection>
     <developerConnection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</developerConnection>
     <url>http://www.trac-wsbc.linkpc.net:8080/cgit/HatSnakeFilter_quimp.git/</url>
-    <tag>HEAD</tag>
+    <tag>v1.0.4</tag>
   </scm>
   <issueManagement>
     <system>Trac</system>
@@ -54,5 +54,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <reporting/>
+  <reporting />
 </project>
