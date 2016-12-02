@@ -4,7 +4,7 @@
     <groupId>uk.ac.warwick.wsbc</groupId>
     <artifactId>pom-quimp-plugin</artifactId>
     <version>16.11.02-SNAPSHOT</version>
-    <relativePath />
+    <relativePath/>
     <!-- http://stackoverflow.com/questions/6003831/parent-relativepath-points-at-my-com-mycompanymyproject-instead-of-org-apache -->
   </parent>
   <!-- Project's coordinates -->
@@ -24,6 +24,19 @@
     <system>Trac</system>
     <url>http://www.trac-wsbc.linkpc.net:8080/trac/QuimP/</url>
   </issueManagement>
+  <developers>
+    <developer>
+      <id>pbaniukiewicz</id>
+      <name>Piotr Baniukiewicz</name>
+      <email>p.baniukiewicz@warwick.ac.uk</email>
+      <organization>University of Warwick</organization>
+      <roles>
+        <role>developer</role>
+        <role>researcher</role>
+      </roles>
+      <timezone>London</timezone>
+    </developer>
+  </developers>
   <build>
     <resources>
       <resource>
@@ -54,5 +67,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <reporting />
+  <reporting/>
 </project>
