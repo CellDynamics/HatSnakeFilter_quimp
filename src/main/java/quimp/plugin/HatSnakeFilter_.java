@@ -160,9 +160,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * Data are as list of vectors defining points of polygon. Passed points should be sorted
      * according to a clockwise or anti-clockwise direction
      * 
-     * @param data Polygon points
-     * @see plugin.snakes.IQuimpPoint2dFilter.attachData(List<E>)
-     * @warning \c data can be \c null here.
+     * @param data Polygon points (can be null)
+     * @see uk.ac.warwick.wsbc.QuimP.plugin.snakes.IQuimpBOASnakeFilter#attachData(uk.ac.warwick.wsbc.QuimP.Snake)
      */
     @Override
     public void attachData(List<Point2d> data) {
@@ -179,17 +178,16 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     }
 
     /**
-     * Main filter runner
+     * Main filter runner.
      * 
      * This version assumes that user clicked Apply button to populate data from UI to plugin or any
-     * other ui element.
+     * other ui element. User can expect that points will be always valid but they optionally may
+     * have 0 length.
      * 
-     * @return Processed \a input list, size of output list may be different than input. Empty
-     *         output is also allowed.
-     * @see HatSnakeFilter_.actionPerformed(ActionEvent)
-     * @see HatSnakeFilter_.stateChanged(ChangeEvent)
-     * @remarks User can expect that \c points will be always valid but they optionally may have 0
-     *          length.
+     * @return Processed input list, size of output list may be different than input. Empty output
+     *         is also allowed.
+     * @see #actionPerformed(ActionEvent)
+     * @see #stateChanged(ChangeEvent)
      */
     @Override
     public List<Point2d> runPlugin() throws QuimpPluginException {
@@ -412,7 +410,6 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * 
      * @return Configuration codes
      * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpCorePlugin
-     * @see uk.ac.warwick.wsbc.plugin.IQuimpPlugin.setup()
      */
     @Override
     public int setup() {
@@ -433,7 +430,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * @param par configuration as pairs <key,val>. Keys are defined by plugin creator and plugin
      *        caller do not modify them.
      * @throws QuimpPluginException on wrong parameters list or wrong parameter conversion
-     * @see wsbc.plugin.IQuimpPlugin.setPluginConfig(HashMap<String, String>)
+     * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPlugin#setPluginConfig(ParamList)
      */
     @Override
     public void setPluginConfig(final ParamList par) throws QuimpPluginException {
@@ -562,8 +559,6 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * 
      * This button run plugin and creates preview of filtered data
      * 
-     * @see uk.ac.warwick.wsbc.tools.images.filters.LoessFilter.runPlugin()
-     * @see uk.ac.warwick.wsbc.tools.images.filters.MeanFilter.runPlugin()
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -781,12 +776,15 @@ class ExPolygon extends Polygon {
 /**
  * Class holding lower and upper index of window. Supports comparisons.
  * 
- * Two ranges <l;u> and <l1;u1> are equal if any of these conditions is met: -# they overlap -# they
- * are the same -# one is included in second
+ * Two ranges <l;u> and <l1;u1> are equal if any of these conditions is met:
+ * <ol>
+ * <li>they overlap
+ * <li>they are the same
+ * <li>one is included in second
+ * </ol>
  * 
  * @author p.baniukiewicz
- * @date 1 Mar 2016
- * @see WindowIndRange.compareTo(Object)
+ * @see WindowIndRange#compareTo(Object)
  */
 class WindowIndRange implements Comparable<Object> {
     public int l, u;
@@ -846,11 +844,20 @@ class WindowIndRange implements Comparable<Object> {
     /**
      * Compare two WindowIndRange objects.
      * 
-     * The following rules of comparison are used: -# If range1 is below range2 they are not equal
-     * -# If range1 is above range2 they are not equal -# They are equal in all other cases: -# They
-     * are sticked -# One includes other -# They overlap
+     * The following rules of comparison are used:
+     * <ol>
+     * <li>If range1 is below range2 they are not equal
+     * <li>If range1 is above range2 they are not equal
+     * </ol>
      * 
-     * @param obj Object to compare to \c this
+     * They are equal in all other cases:
+     * <ol>
+     * <li>They are sticked
+     * <li>One includes other
+     * <li>They overlap
+     * </ol>
+     * 
+     * @param obj Object to compare to this
      * @return -1,0,1 expressing relations in windows positions
      */
     @Override

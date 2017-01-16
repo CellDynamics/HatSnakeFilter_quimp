@@ -84,7 +84,7 @@ public class HatFilter_Param_Test {
      * Set of parameters for tests.
      * 
      * @return List of strings with paths to testfiles and smooth parameter
-     * @see QuimP-toolbox/Prototyping/59-Shape_filtering/main.m for creating *.dat files
+     * @see <a href="creating *.dat files">QuimP-toolbox/Prototyping/59-Shape_filtering/main.m</a>
      */
     @Parameterized.Parameters
     public static Collection<Object[]> testFiles() {
@@ -99,14 +99,17 @@ public class HatFilter_Param_Test {
     }
 
     /**
-     * @test Test of getInterpolationLoess method
-     * @pre Real cases extracted from
-     * @post Save image test_HatFilter_* in /tmp/
+     * Test of getInterpolationLoess method
+     * 
+     * Pre: Real cases extracted from
+     * 
+     * Post: Save image test_HatFilter_* in /tmp/
+     * 
      * @throws QuimpPluginException
-     * @see QuimP-toolbox/algorithms/src/test/resources/HatFilter.m for verification of logs
-     *      (ratios, indexes, etc)
-     * @see <EM>../src/test/resources/HatFilter.m</EM> for plotting results
-     * @see QuimP-toolbox/Prototyping/59-Shape_filtering/main.m for creating *.dat files
+     * @see <a
+     *      href="verification of logs (ratios, indexes, etc)">QuimP-toolbox/Prototyping/59-Shape_filtering/HatFilter.m</a>
+     * @see <a href="resorces">/src/test/resources/HatFilter.m</a>
+     * @see <a href="creating *.dat files">QuimP-toolbox/Prototyping/59-Shape_filtering/main.m</a>
      */
     @SuppressWarnings("serial")
     @Test
@@ -128,10 +131,12 @@ public class HatFilter_Param_Test {
     }
 
     /**
-     * @test Simple test of RoiSaver class, create reference images without processing but with the
-     *       same name scheme as processed data
-     * @post Save image in /tmp
-     * @see <EM>../src/test/resources/HatFilter.m</EM> for plotting results
+     * Simple test of RoiSaver class, create reference images without processing but with the same
+     * name scheme as processed data.
+     * 
+     * Post: Save image in /tmp
+     * 
+     * @see <a href="resorces">/src/test/resources/HatFilter.m</a>
      */
     @Test
     public void test_roiSaver() {

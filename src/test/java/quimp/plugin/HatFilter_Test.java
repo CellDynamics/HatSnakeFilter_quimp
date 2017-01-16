@@ -49,7 +49,7 @@ public class HatFilter_Test {
      * Load all data
      * 
      * @throws Exception
-     * @see ../src/test/resources/HatFilter.m
+     * @see <a href="../src/test/resources/HatFilter.m">../src/test/resources/HatFilter.m</a>
      */
     @Before
     public void setUp() throws Exception {
