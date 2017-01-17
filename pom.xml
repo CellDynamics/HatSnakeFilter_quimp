@@ -11,14 +11,14 @@
   <groupId>uk.ac.warwick.wsbc</groupId>
   <artifactId>HatSnakeFilter-quimp</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.6</version>
+  <version>1.0.7-SNAPSHOT</version>
   <!-- Name and licencing and other project informations -->
   <name>HatSnakeFilter-quimp</name>
   <scm>
     <connection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</connection>
     <developerConnection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</developerConnection>
     <url>http://www.trac-wsbc.linkpc.net:8080/cgit/HatSnakeFilter_quimp.git/</url>
-    <tag>v1.0.6</tag>
+    <tag>HEAD</tag>
   </scm>
   <issueManagement>
     <system>Trac</system>
