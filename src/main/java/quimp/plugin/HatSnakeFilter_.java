@@ -534,14 +534,17 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * Here used for updating view but it can be used for example for auto-fixing even values
      * provided by user:
      * 
-     * @code{.java} Object source = ce.getSource(); JSpinner s = (JSpinner)ui.get("window"); // get
+     * <pre>
+     * <code>
+     * Object source = ce.getSource(); JSpinner s = (JSpinner)ui.get("window"); // get
      *              ui element JSpinner s1 = (JSpinner)ui.get("crown"); // get ui element if(source
      *              == s) { // check if this event concerns it logger.debug("Spinner window used");
      *              if(((Double)s.getValue()).intValue()%2==0 ) s.setValue((Double)s.getValue() +
      *              1); } if(source == s1) { // check if this event concerns it
      *              logger.debug("Spinner crown used"); if(((Double)s1.getValue()).intValue()%2==0 )
      *              s1.setValue((Double)s1.getValue() + 1); }
-     * @endcode
+     * </code>
+     * </pre>
      * 
      */
     @Override
@@ -552,9 +555,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     }
 
     /**
-     * React on \b Apply button.
+     * React on Apply button.
      * 
-     * Here \b Apply button copies window content into plugin structures. This is different approach
+     * Here Apply button copies window content into plugin structures. This is different approach
      * than in LoessFilter and MeanFilter where window content was copied while runPlugin() command
      * 
      * This button run plugin and creates preview of filtered data

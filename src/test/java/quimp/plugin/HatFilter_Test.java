@@ -27,18 +27,17 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
  * Test class for HatFilter
  * 
  * @author p.baniukiewicz
- * @date 25 Jan 2016
  *
  */
 public class HatFilter_Test {
 
     static final Logger LOGGER = LoggerFactory.getLogger(HatFilter_Test.class.getName());
     private List<Point2d> input;
-    private List<Point2d> lininput; //!< line at 45 deg
-    private List<Point2d> circ; //!< circular object <EM>../src/test/resources/HatFilter.m</EM>
+    private List<Point2d> lininput; // line at 45 deg
+    private List<Point2d> circ; // circular object <EM>../src/test/resources/HatFilter.m</EM>
     /**
      * simulated protrusions %% protrusions - generate test data from
-     * <EM>../src/test/resources/HatFilter.m</EM>
+     * ../src/test/resources/HatFilter.m
      */
     private List<Point2d> prot;
 
@@ -75,9 +74,12 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Test of HatSnakeFilter_.runPlugin()
-     * @pre Ideally circular object
-     * @post In logs: -# Weighting the same -# circularity the same
+     * Test of HatSnakeFilter_.runPlugin()
+     * 
+     * Pre: Ideally circular object
+     * 
+     * Post: In logs: -# Weighting the same -# circularity the same
+     * 
      * @throws QuimpPluginException
      */
     @SuppressWarnings("serial")
@@ -97,14 +99,16 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Test of HatSnakeFilter_.runPlugin()
-     * @pre Simulated protrusions
-     * @post Logs are comparable with script <EM>../src/test/resources/HatFilter.m</EM> After run go
-     *       to folder mentioned above and run <EM>%% protrusions - load java results and compare
-     *       with matlab</EM> to verify results
+     * Test of HatSnakeFilter_.runPlugin().
+     * 
+     * Pre: Simulated protrusions post Logs are comparable with script
+     * ../src/test/resources/HatFilter.m After run go to folder mentioned above and run %%
+     * protrusions - load java results and compare with matlab to verify results
+     * 
+     * This matlab code is not fully compatible with java. Some results differ Matlab dont accept
+     * windows lying on beginning because they have indexes 1-max.
+     * 
      * @throws QuimpPluginException
-     * @warning This matlab code is not fully compatible with java. Some results differ Matlab dont
-     *          accept windows lying on beginning because they have indexes 1-max.
      */
     @SuppressWarnings("serial")
     @Test
@@ -124,10 +128,13 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Test of HatSnakeFilter_.runPlugin()
-     * @pre Linear object
-     * @post In logs: -# Weighting differ at end -# circularity differ at end -# Window is moving
-     *       and has circular padding
+     * Test of HatSnakeFilter_.runPlugin()
+     * 
+     * Pre: Linear object
+     * 
+     * Post: In logs: -# Weighting differ at end -# circularity differ at end -# Window is moving
+     * and has circular padding
+     * 
      * @throws QuimpPluginException
      */
     @SuppressWarnings("serial")
@@ -147,9 +154,12 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test test set and get parameters to/from filter
-     * @pre given parameters
-     * @post the same parameters received from filter
+     * test set and get parameters to/from filter.
+     * 
+     * Pre: given parameters
+     * 
+     * Post: the same parameters received from filter
+     * 
      * @see HatFilter_run for veryfing diaplaying set parameters.
      * @throws QuimpPluginException
      */
@@ -172,9 +182,11 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Input condition for HatFilter
-     * @pre Various bad combinations of inputs
-     * @post Exception FilterException
+     * Input condition for HatFilter
+     * 
+     * Pre: Various bad combinations of inputs
+     * 
+     * Post: Exception FilterException
      */
     @SuppressWarnings("serial")
     @Test
@@ -294,9 +306,11 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Test of WindowIndRange class
-     * @pre Separated ranges of indexes
-     * @post All ranges are added to list
+     * Test of WindowIndRange class
+     * 
+     * Pre: Separated ranges of indexes
+     * 
+     * Post: All ranges are added to list
      */
     @Test
     public void testWindowIndRange_1() {
@@ -308,9 +322,11 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Test of WindowIndRange class
-     * @pre Overlap ranges of indexes
-     * @post Overlap ranges are not added to list
+     * Test of WindowIndRange class
+     * 
+     * Pre: Overlap ranges of indexes
+     * 
+     * Post: Overlap ranges are not added to list
      */
     @Test
     public void testWindowIndRange_2() {
@@ -329,8 +345,8 @@ public class HatFilter_Test {
     }
 
     /**
-     * @test Test of WindowIndRange class Test if particular point is included in any range stored
-     *       in TreeSet
+     * Test of WindowIndRange class Test if particular point is included in any range stored in
+     * TreeSet
      */
     @Test
     public void testWindowIndRange_3() {
