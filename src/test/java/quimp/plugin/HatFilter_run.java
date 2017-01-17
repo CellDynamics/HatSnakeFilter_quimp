@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JFrame;
-import javax.vecmath.Point2d;
+
+import org.scijava.vecmath.Point2d;
 
 import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
 import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;

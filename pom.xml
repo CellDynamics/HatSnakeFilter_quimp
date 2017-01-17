@@ -3,7 +3,7 @@
   <parent>
     <groupId>uk.ac.warwick.wsbc</groupId>
     <artifactId>pom-quimp-plugin</artifactId>
-    <version>16.12.01</version>
+    <version>17.01.01</version>
     <relativePath />
     <!-- http://stackoverflow.com/questions/6003831/parent-relativepath-points-at-my-com-mycompanymyproject-instead-of-org-apache -->
   </parent>
@@ -11,14 +11,14 @@
   <groupId>uk.ac.warwick.wsbc</groupId>
   <artifactId>HatSnakeFilter-quimp</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <!-- Name and licencing and other project informations -->
   <name>HatSnakeFilter-quimp</name>
   <scm>
     <connection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</connection>
     <developerConnection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</developerConnection>
     <url>http://www.trac-wsbc.linkpc.net:8080/cgit/HatSnakeFilter_quimp.git/</url>
-    <tag>v1.0.5</tag>
+    <tag>v1.0.6</tag>
   </scm>
   <issueManagement>
     <system>Trac</system>
