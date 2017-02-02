@@ -28,6 +28,11 @@ import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
  */
 public class HatFilter_run {
 
+    /**
+     * @param args
+     * @throws QuimpPluginException
+     * @throws InterruptedException
+     */
     @SuppressWarnings("serial")
     public static void main(String[] args) throws QuimpPluginException, InterruptedException {
         List<Point2d> input;
