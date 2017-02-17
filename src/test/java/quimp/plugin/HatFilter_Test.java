@@ -41,6 +41,9 @@ public class HatFilter_Test {
      */
     private List<Point2d> prot;
 
+    /**
+     * 
+     */
     @Rule
     public TestName name = new TestName(); //!< Allow to get tested method name (called at setUp())
 
@@ -69,6 +72,9 @@ public class HatFilter_Test {
         prot = new DataLoader("src/test/resources/testData_prot.dat").getData();
     }
 
+    /**
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
     }
@@ -160,7 +166,8 @@ public class HatFilter_Test {
      * 
      * Post: the same parameters received from filter
      * 
-     * @see HatFilter_run for veryfing diaplaying set parameters.
+     * Look at HatFilter_run for veryfing diaplaying set parameters.
+     * 
      * @throws QuimpPluginException
      */
     @SuppressWarnings("serial")
