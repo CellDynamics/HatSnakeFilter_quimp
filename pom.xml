@@ -35,14 +35,14 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</connection>
-    <developerConnection>scm:git:file://localhost/home/baniuk/Documents/Repos/HatSnakeFilter_quimp</developerConnection>
-    <url>http://www.trac-wsbc.linkpc.net:8080/cgit/HatSnakeFilter_quimp.git/</url>
+    <connection>scm:git:https://github.com/CellDynamics/HatSnakeFilter_quimp.git</connection>
+    <developerConnection>scm:git:https://github.com/CellDynamics/HatSnakeFilter_quimp.git</developerConnection>
+    <url>https://github.com/CellDynamics/HatSnakeFilter_quimp</url>
     <tag>HEAD</tag>
   </scm>
   <issueManagement>
-    <system>Trac</system>
-    <url>http://www.trac-wsbc.linkpc.net:8080/trac/QuimP/</url>
+    <system>GitHub</system>
+    <url>https://github.com/CellDynamics/HatSnakeFilter_quimp/issues/</url>
   </issueManagement>
   <ciManagement>
     <system>None</system>
