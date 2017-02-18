@@ -1,9 +1,6 @@
 package quimp.plugin;
-/**
- * @file HatFilter_Param_Test.java
- * @date 25 Jan 2016
- */
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -25,18 +22,21 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.DataLoader;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
 
 /**
- * Parameterized test for HatFilter
+ * Parameterised test for HatFilter
  * 
  * Generates images of processed data as well as images of original data. Those can be viewed in
  * <EM>../src/test/resources/HatFilter.m</EM>
  * 
  * @author p.baniukiewicz
- * @date 25 Jan 2016
  *
  */
 @RunWith(Parameterized.class)
 public class HatFilter_Param_Test {
     static final Logger LOGGER = LoggerFactory.getLogger(HatFilter_Param_Test.class.getName());
+    /**
+     * The tmpdir.
+     */
+    static String tmpdir = System.getProperty("java.io.tmpdir") + File.separator;
     private Integer window;
     private Integer pnum;
     private Double alev;
@@ -125,7 +125,7 @@ public class HatFilter_Param_Test {
             }
         });
         out = hf.runPlugin();
-        RoiSaver.saveROI("/tmp/test_HatFilter_" + testfileName.getFileName() + "_"
+        RoiSaver.saveROI(tmpdir + "test_HatFilter_" + testfileName.getFileName() + "_"
                 + window.toString() + "_" + pnum.toString() + "_" + alev.toString() + ".tif", out);
         LOGGER.debug("setUp: " + testcase.toString());
     }
@@ -140,7 +140,7 @@ public class HatFilter_Param_Test {
      */
     @Test
     public void test_roiSaver() {
-        RoiSaver.saveROI("/tmp/ref_HatFilter_" + testfileName.getFileName() + "_"
+        RoiSaver.saveROI(tmpdir + "ref_HatFilter_" + testfileName.getFileName() + "_"
                 + window.toString() + "_" + pnum.toString() + "_" + alev.toString() + ".tif",
                 testcase);
     }

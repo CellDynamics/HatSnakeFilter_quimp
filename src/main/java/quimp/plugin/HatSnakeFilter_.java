@@ -42,97 +42,112 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.IPadArray;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
 
 /**
- * Implementation of HatFilter for removing convexes from polygon
+ * Implementation of HatFilter for removing convexes from polygon.
  * 
- * <H1>List of user parameters</H1> -# \c window - Size of window in pixels. It is responsible for
- * sensitivity to protrusions of given size. Larger window can eliminate small and large protrusions
- * whereas smaller window is sensitive only to small protrusions. -# \c window should be from 3 to
- * number of outline points. -# \c pnum - Number of protrusions that will be found in outline. If
- * not limited by \c alev parameter the algorithm will eliminate \c pnum objects from outline
- * without considering if they are protrusions or not. -# \c pnum should be from 1 to any value.
- * Algorithm stops searching when there is no candidates to remove. -# \c alev - Threshold value, if
- * circularity computed for given window position is lower than threshold this window is not
- * eliminated regarding \c pnum or its rank in circularities. -# \c alev should be in range form 0
- * to 1, where 0 stands for accepting every candidate
- * 
- * <H1>General description of algorithm</H1> The window slides over the wrapped contour. Points
+ * <h3>List of user parameters:</h3>
+ * <ol>
+ * <li><i>window</i> - Size of window in pixels. It is responsible for sensitivity to protrusions of
+ * given size. Larger window can eliminate small and large protrusions whereas smaller window is
+ * sensitive only to small protrusions.
+ * <li>window should be from 3 to number of outline points.
+ * <li><i>pnum</i> - Number of protrusions that will be found in outline. If not limited by
+ * <i>alev</i> parameter the algorithm will eliminate <i>pnum</i> objects from outline without
+ * considering if they are protrusions or not.
+ * <li><i>pnum</i> should be from 1 to any value. Algorithm stops searching when there is no
+ * candidates to remove.
+ * <li><i>alev</i> - Threshold value, if circularity computed for given window position is lower
+ * than threshold this window is not eliminated regarding <i>pnum</i> or its rank in circularities.
+ * <li><i>alev</i> should be in range form 0 to 1, where 0 stands for accepting every candidate
+ * </ol>
+ * <p>
+ * <h3>General description of algorithm:</h3> The window slides over the wrapped contour. Points
  * inside window for its position \a p are considered as candidates to removal from contour if they
- * meet the following criterion: -# The window has achieved for position \a p circularity parameter
- * \a c larger than \c alev -# The window on position \a p does not touch any other previously found
- * window. -# Points of window \a p are convex.
- * 
- * Every window \a p has assigned a \a rank. Bigger \a rank stands for better candidate to remove.
- * Algorithm tries to remove first \c pnum windows (those with biggest ranks) that meet above rules.
- * 
- * <H1>Detailed description of algorithm</H1> The algorithm comprises of three main steps: -#
- * Preparing \a rank table of candidates to remove -# Iterating over \a rank table to find \c pnum
- * such candidates who meet rules and store their coordinates in \c ind2rem array. By candidates it
- * is understood sets of polygon indexes that is covered by window on given position. For
- * simplification those vertexes are identified by lover and upper index of window in outline array
- * (input). -# Forming output table without protrusions.
- * 
- * <H2>First step</H2> The window of size \c window slides over looped data. Looping is performed by
- * java.util.Collections.rotate method that shift data left copying falling out indexes to end of
- * the set (finally the window is settled in constant position between indexes <0;window-1>). For
- * each its position \c r the candidate points are deleted from original contour and circularity is
- * computed (see getCircularity(final List<Vector2d>)). Then candidate points are passed to
- * getWeighting(final List<Vector2d>) method where weight is evaluated. The role of weight is to
- * promote in \a rank candidate points that are cumulated in small area over distributed sets. Thus
- * weight should give larger values for that latter distribution than for cumulated one. Currently
- * weights are calculated as standard deviation of distances of all candidate points to center of
- * mass of these points (or mean point if polygon is invalid). Finally circularity(r) is divided by
- * weight(r) and stored in \c circ array. Additionally in this step the convex is checked. All
- * candidate points are tested for inclusion in contour without these points. This information is
- * stored in \c convex array. Finally rank array \c circ is normalized to maximum element.
- * 
- * <H2>Second step</H2> In second step array of ranks \c circ is sorted in descending order. For
+ * meet the following criterion:
+ * <ol>
+ * <li>The window has achieved for position \a p circularity parameter <i>c</i> larger than
+ * <i>alev</i>
+ * <li>The window on position <i>p</i> does not touch any other previously found window.
+ * <li>Points of window <i>p</i> are convex.
+ * </ol>
+ * <p>
+ * Every window <i>p</i> has assigned a <i>rank</i>. Bigger <i>rank</i> stands for better candidate
+ * to remove. Algorithm tries to remove first <i>pnum</i> windows (those with biggest ranks) that
+ * meet above rules.
+ * <p>
+ * <H3>Detailed description of algorithm</H3> The algorithm comprises of three main steps:
+ * <ol>
+ * <li>Preparing <i>rank</i> table of candidates to remove
+ * <li>Iterating over <i>rank</i> table to find <i>pnum</i> such candidates who meet rules and store
+ * their coordinates in <i>ind2rem</i> array. By candidates it is understood sets of polygon indexes
+ * that is covered by window on given position. For simplification those vertexes are identified by
+ * lover and upper index of window in outline array (input).
+ * <li>Forming output table without protrusions.
+ * </ol>
+ * <p>
+ * <H2>First step</H2> The window of size <i>window</i> slides over looped data. Looping is
+ * performed by java.util.Collections.rotate method that shift data left copying falling out indexes
+ * to end of the set (finally the window is settled in constant position between indexes
+ * <0;window-1>). For each its position <i>r</i> the candidate points are deleted from original
+ * contour and circularity is computed (see {@link #getCircularity(List)}). Then candidate points
+ * are passed to {@link #getWeighting(List)} method where weight is evaluated. The role of weight is
+ * to promote in <i>rank</i> candidate points that are cumulated in small area over distributed
+ * sets. Thus weight should give larger values for that latter distribution than for cumulated one.
+ * Currently weights are calculated as standard deviation of distances of all candidate points to
+ * center of mass of these points (or mean point if polygon is invalid). Finally circularity(r) is
+ * divided by weight (<i>r</i>) and stored in <i>circ</i> array. Additionally in this step the
+ * convex is checked. All candidate points are tested for inclusion in contour without these points.
+ * This information is stored in <i>convex</i> array. Finally rank array <i>circ</i> is normalised
+ * to maximum element.
+ * <p>
+ * <H2>Second step</H2> In second step array of ranks <i>circ</i> is sorted in descending order. For
  * every rank in sorted table the real position of window is retrieved (that gave this rank). The
  * window position is defined here by two numbers - \c lover and \c upper range of indexes covered
- * by it. The candidate points from this window are validated for criterion: -# \a rank must be
- * greater than \a alev -# lower and upper index of window (index means here number of polygon
- * vertex in array) must not be included in any previously found window. This checking is done by
- * deriving own class WindowIndRange with overwritten WindowIndRange.compareTo(Object) method that
- * defines rules of equality and non relations between ranges. Basically any overlapping range or
- * included is considered as equal and rejected from storing in \c ind2rem array. -# candidate
- * points must be convex. As mentioned before \a convex means that \b all candidate points are
- * outside the original contour formed without these points. -# current \a rank (\c circ) is greater
- * than \c alev
- * 
- * If all above criterion are meet the window <l;u> is stored in \c ind2rem. Windows on end of data
- * are wrapped by dividing them for two sub-windows: <w;end> and <0;c> otherwise they may cover the
- * whole range (e.g. <10;3> does not stand for window from 10 wrapped to 3 but window from 3 to 10).
- * 
+ * by it. The candidate points from this window are validated for criterion:
+ * <ol>
+ * <li><i>rank</i> must be greater than <i>alev</i>
+ * <li>lower and upper index of window (index means here number of polygon vertex in array) must not
+ * be included in any previously found window. This checking is done by deriving own class
+ * WindowIndRange with overwritten {@link WindowIndRange#compareTo(Object)} method that defines
+ * rules of equality and non relations between ranges. Basically any overlapping range or included
+ * is considered as equal and rejected from storing in <i>ind2rem</i> array.
+ * <li>candidate points must be convex. As mentioned before <i>convex</i> means that <b>all</b>
+ * candidate points are outside the original contour formed without these points.
+ * <li>current <i>rank</i> (<i>circ</i>) is greater than <i>alev</i>
+ * </ol>
+ * If all above criterion are meet the window <l;u> is stored in <i>ind2rem</i>. Windows on end of
+ * data are wrapped by dividing them for two sub-windows: <w;end> and <0;c> otherwise they may cover
+ * the whole range (e.g. <10;3> does not stand for window from 10 wrapped to 3 but window from 3 to
+ * 10).
+ * <p>
  * The second step is repeated until \c pnum object will be found or end of candidates will be
  * reached.
- * 
+ * <p>
  * <H2>Third step</H2> In third step every point from original contour is tested for including in
- * array \c ind2rem that contains ranges of indexes to remove. Points on index that is not included
- * in any of ranges stored in \c ind2rem are copied to output.
+ * array <i>ind2rem</i> that contains ranges of indexes to remove. Points on index that is not
+ * included in any of ranges stored in <i>ind2rem</i> are copied to output.
  * 
  * @author p.baniukiewicz
- * @date 25 Jan 2016 First version
- * @date 03 Jan 2016 Modified algorithm
  */
 public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dFilter, IPadArray,
         ChangeListener, ActionListener, IQuimpPluginSynchro {
     static final Logger LOGGER = LoggerFactory.getLogger(HatSnakeFilter_.class.getName());
     private final int DRAW_SIZE = 200; //!< size of draw area in window
 
-    private int window; //!< filter's window size
-    private int pnum; //!< how many protrusions to remove
-    private double alev; //!< minimal acceptance level
-    private List<Point2d> points; //!< original contour passed from QuimP
-    private ParamList uiDefinition; //!< Definition of UI for this plugin
-    private DrawPanel dp; //!< Here we will draw. This panel is plot in place of help field
-    private ExPolygon p; //!< representation of snake as polygon
-    private ExPolygon pout; //!< output polygon based on \c out
-    private List<Point2d> out; //!< output after filtering
+    private int window; // filter's window size
+    private int pnum; // how many protrusions to remove
+    private double alev; // minimal acceptance level
+    private List<Point2d> points; // original contour passed from QuimP
+    private ParamList uiDefinition; // Definition of UI for this plugin
+    private DrawPanel dp; // Here we will draw. This panel is plot in place of help field
+    private ExPolygon p; // representation of snake as polygon
+    private ExPolygon pout; // output polygon based on \c out
+    private List<Point2d> out; // output after filtering
     private JTextArea logArea;
-    private int err; //!< general counter of log entries
-    private ViewUpdater qcontext; //!< remember QuimP context to recalculate and update its view 
+    private int err; // general counter of log entries
+    private ViewUpdater qcontext; // remember QuimP context to recalculate and update its view
 
     /**
-     * Construct HatFilter Input array with data is virtually circularly padded
+     * Construct HatFilter Input array with data is virtually circularly padded.
      */
     public HatSnakeFilter_() {
         LOGGER.trace("Entering constructor");
@@ -199,16 +214,21 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
         List<Point2d> out = new ArrayList<Point2d>(); // output table for plotting temporary
                                                       // results of filter
         // check input conditions
-        if (window % 2 == 0 || window < 0)
+        if (window % 2 == 0 || window < 0) {
             throw new QuimpPluginException("Window must be uneven, positive and larger than 0");
-        if (window >= points.size())
+        }
+        if (window >= points.size()) {
             throw new QuimpPluginException("Processing window to long");
-        if (window < 3)
+        }
+        if (window < 3) {
             throw new QuimpPluginException("Window should be larger than 2");
-        if (pnum <= 0)
+        }
+        if (pnum <= 0) {
             throw new QuimpPluginException("Number of protrusions should be larger than 0");
-        if (alev < 0)
+        }
+        if (alev < 0) {
             throw new QuimpPluginException("Acceptacne level should be positive");
+        }
 
         WindowIndRange indexTest = new WindowIndRange(); // temporary variable for keeping window
                                                          // currently tested for containing in
@@ -298,14 +318,16 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
                         ind2rem.add(new WindowIndRange(startpos, points.size() - 1));
                         // turn window to beginning
                         ind2rem.add(new WindowIndRange(0, window - (points.size() - startpos) - 1));
-                    } else
+                    } else {
                         ind2rem.add(new WindowIndRange(startpos, startpos + window - 1));
+                    }
                     LOGGER.trace("added win for i=" + i + " startpos=" + startpos + " coord:"
                             + points.get(startpos).toString());
                     found++;
                     i++;
-                } else // go to next candidate in sorted circularities
+                } else {// go to next candidate in sorted circularities
                     i++;
+                }
             } else { // first candidate always accepted
                 // find where it was before sorting and store in window positions
                 int startpos = circ.indexOf(circsorted.get(i));
@@ -315,8 +337,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
                     ind2rem.add(new WindowIndRange(startpos, points.size() - 1));
                     // turn window to beginning
                     ind2rem.add(new WindowIndRange(0, window - (points.size() - startpos) - 1));
-                } else
+                } else {
                     ind2rem.add(new WindowIndRange(startpos, startpos + window - 1));
+                }
                 LOGGER.trace("added win for i=" + i + " startpos=" + startpos + " coord:"
                         + points.get(startpos).toString());
                 i++;
@@ -329,15 +352,15 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
         for (i = 0; i < points.size(); i++) {
             indexTest.setSame(i); // set upper and lower index to the same value - allows to test
                                   // particular index for its presence in any defined range
-            if (!ind2rem.contains(indexTest)) // check if any window position (l and u bound)
-                out.add(new Point2d(points.get(i))); // include tested point. Copy it to new array
-                                                     // if not
+            if (!ind2rem.contains(indexTest)) {// check if any window position (l and u bound)
+                out.add(new Point2d(points.get(i)));
+            } // include tested point. Copy it to new array if not
         }
         return out;
     }
 
     /**
-     * Calculate circularity of polygon
+     * Calculate circularity of polygon.
      * 
      * Circularity is computed as: \f[ circ=\frac{4*\pi*A}{P^2} \f] where \f$A\f$ is polygon area
      * and \f$P\f$ is its perimeter
@@ -352,7 +375,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
         area = b.getPolyArea(p);
         perim = b.getPolyPerim(p);
 
-        return ((4 * Math.PI * area) / (perim * perim));
+        return (4 * Math.PI * area) / (perim * perim);
     }
 
     /**
@@ -362,8 +385,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * this point and every other point. Cumulated distributions like protrusions give smaller
      * values than elongated ones.
      * 
-     * If input polygon /c p (which is only part of whole cell shape) is defective, i.e its edges
-     * cross, the weight is calculated using middle vector defined as mean of coordinates.
+     * If input polygon <i>p</i> (which is only part of whole cell shape) is defective, i.e its
+     * edges cross, the weight is calculated using middle vector defined as mean of coordinates.
      * 
      * @param p Polygon vertices
      * @return Weight
@@ -422,9 +445,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * 
      * Supported keys:
      * <ol>
-     * <li>\c window - size of main window
-     * <li>\c crown - size of inner window
-     * <li>\c sigma - cut-off value (see class description)
+     * <li><i>window</i> - size of main window
+     * <li><i>crown</i> - size of inner window
+     * <li><i>sigma</i> - cut-off value (see class description)
      * </ol>
      * 
      * @param par configuration as pairs <key,val>. Keys are defined by plugin creator and plugin
@@ -480,8 +503,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     /**
      * Override of uk.ac.warwick.wsbc.plugin.utils.QWindowBuilder.BuildWindow()
      * 
-     * The aim is to: -# attach listeners for spinners for preventing even numbers -# attach
-     * listener for build-in apply button -# add draw field DrawPanel
+     * The aim is to: 1) attach listeners for spinners for preventing even numbers 2) attach
+     * listener for build-in apply button 3) add draw field DrawPanel
      */
     @Override
     public void buildWindow(final ParamList def) {
@@ -530,22 +553,6 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
 
     /**
      * React on spinners changes.
-     * 
-     * Here used for updating view but it can be used for example for auto-fixing even values
-     * provided by user:
-     * 
-     * <pre>
-     * <code>
-     * Object source = ce.getSource(); JSpinner s = (JSpinner)ui.get("window"); // get
-     *              ui element JSpinner s1 = (JSpinner)ui.get("crown"); // get ui element if(source
-     *              == s) { // check if this event concerns it logger.debug("Spinner window used");
-     *              if(((Double)s.getValue()).intValue()%2==0 ) s.setValue((Double)s.getValue() +
-     *              1); } if(source == s1) { // check if this event concerns it
-     *              logger.debug("Spinner crown used"); if(((Double)s1.getValue()).intValue()%2==0 )
-     *              s1.setValue((Double)s1.getValue() + 1); }
-     * </code>
-     * </pre>
-     * 
      */
     @Override
     public void stateChanged(ChangeEvent ce) {
@@ -558,7 +565,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * React on Apply button.
      * 
      * Here Apply button copies window content into plugin structures. This is different approach
-     * than in LoessFilter and MeanFilter where window content was copied while runPlugin() command
+     * than in LoessFilter and MeanFilter where window content was copied while {@link #runPlugin()}
+     * command
      * 
      * This button run plugin and creates preview of filtered data
      * 
@@ -611,7 +619,6 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * Class for plotting in center part of plugin derived from QWindowBuilder
      * 
      * @author p.baniukiewicz
-     * @date 8 Feb 2016
      *
      */
     class DrawPanel extends JPanel {
@@ -671,7 +678,6 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * deleting Snake id=n, active became Snake id=n-1
      * 
      * @author p.baniukiewicz
-     * @date 25 Apr 2016
      *
      */
     class HatWindowAdapter extends WindowAdapter {
@@ -694,10 +700,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
 /**
  * Helper class supporting scaling and fitting polygon to DrawWindow
  * 
- * This class is strictly TreeSet related. \c equals method does not assure correct comparison
+ * This class is strictly TreeSet related. equals method does not assure correct comparison
  * 
  * @author p.baniukiewicz
- * @date 8 Feb 2016
  *
  */
 class ExPolygon extends Polygon {
@@ -720,7 +725,7 @@ class ExPolygon extends Polygon {
     }
 
     /**
-     * Scale polygon to fit in rectangular window of \c size
+     * Scale polygon to fit in rectangular window of size
      * 
      * Method changes internal polygon representation. Fitting is done basing on bounding box area.
      * 
@@ -751,8 +756,7 @@ class ExPolygon extends Polygon {
     }
 
     /**
-     * Scale polygon to fit in rectangular window of \c size using pre-computed bounding box and
-     * scale
+     * Scale polygon to fit in rectangular window of size using pre-computed bounding box and scale
      * 
      * Use for setting next polygon on base of previous, when next has different shape but must be
      * centered with previous one.
@@ -823,24 +827,28 @@ class WindowIndRange implements Comparable<Object> {
      * Compare two WindowIndRange objects.
      * 
      * @param obj
-     * @return \c true only if ranges does not overlap
+     * @return true only if ranges does not overlap
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
 
         final WindowIndRange other = (WindowIndRange) obj;
-        if (u < other.l)
+        if (u < other.l) {
             return true;
-        else if (l > other.u)
+        } else if (l > other.u) {
             return true;
-        else
+        } else {
             return false;
+        }
 
     }
 
@@ -852,7 +860,7 @@ class WindowIndRange implements Comparable<Object> {
      * <li>If range1 is below range2 they are not equal
      * <li>If range1 is above range2 they are not equal
      * </ol>
-     * 
+     * <p>
      * They are equal in all other cases:
      * <ol>
      * <li>They are sticked
@@ -866,21 +874,23 @@ class WindowIndRange implements Comparable<Object> {
     @Override
     public int compareTo(Object obj) {
         final WindowIndRange other = (WindowIndRange) obj;
-        if (this == obj)
+        if (this == obj) {
             return 0;
+        }
 
-        if (u < other.l)
+        if (u < other.l) {
             return -1;
-        else if (l > other.u)
+        } else if (l > other.u) {
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
-     * Sets upper and lower indexes to the same value
+     * Sets upper and lower indexes to the same value.
      * 
-     * @param i Value to set for \c u and \c l
+     * @param i Value to set for u and l
      */
     public void setSame(int i) {
         l = i;

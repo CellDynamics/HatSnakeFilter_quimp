@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -24,7 +25,7 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.DataLoader;
 import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
 
 /**
- * Test class for HatFilter
+ * Test class for HatFilter.
  * 
  * @author p.baniukiewicz
  *
@@ -32,12 +33,18 @@ import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
 public class HatFilter_Test {
 
     static final Logger LOGGER = LoggerFactory.getLogger(HatFilter_Test.class.getName());
+    /**
+     * The tmpdir.
+     */
+    static String tmpdir = System.getProperty("java.io.tmpdir") + File.separator;
+
     private List<Point2d> input;
     private List<Point2d> lininput; // line at 45 deg
     private List<Point2d> circ; // circular object <EM>../src/test/resources/HatFilter.m</EM>
     /**
-     * simulated protrusions %% protrusions - generate test data from
-     * ../src/test/resources/HatFilter.m
+     * simulated protrusions
+     * 
+     * % protrusions - generate test data from ../src/test/resources/HatFilter.m
      */
     private List<Point2d> prot;
 
@@ -45,7 +52,7 @@ public class HatFilter_Test {
      * 
      */
     @Rule
-    public TestName name = new TestName(); //!< Allow to get tested method name (called at setUp())
+    public TestName name = new TestName(); // Allow to get tested method name (called at setUp())
 
     /**
      * Load all data
@@ -68,7 +75,6 @@ public class HatFilter_Test {
             lininput.add(new Point2d(i, i));
 
         circ = new DataLoader("src/test/resources/testData_circle.dat").getData();
-
         prot = new DataLoader("src/test/resources/testData_prot.dat").getData();
     }
 
@@ -84,7 +90,7 @@ public class HatFilter_Test {
      * 
      * Pre: Ideally circular object
      * 
-     * Post: In logs: -# Weighting the same -# circularity the same
+     * Post: In logs: 1) Weighting the same, 2)circularity the same
      * 
      * @throws QuimpPluginException
      */
@@ -130,7 +136,7 @@ public class HatFilter_Test {
             }
         });
         List<Point2d> out = hf.runPlugin();
-        RoiSaver.saveROI("/tmp/test_HatFilter_run_2.tif", out);
+        RoiSaver.saveROI(tmpdir + "test_HatFilter_run_2.tif", out);
     }
 
     /**
@@ -138,7 +144,7 @@ public class HatFilter_Test {
      * 
      * Pre: Linear object
      * 
-     * Post: In logs: -# Weighting differ at end -# circularity differ at end -# Window is moving
+     * Post: In logs: 1) Weighting differ at end, 2) circularity differ at end -# Window is moving
      * and has circular padding
      * 
      * @throws QuimpPluginException

@@ -1,8 +1,4 @@
 package quimp.plugin;
-/**
- * @file HatFilter_run.java
- * @date 8 Feb 2016
- */
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -18,12 +14,11 @@ import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
 import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
 
 /**
- * Test class for HatFilter UI
+ * Test class for HatFilter UI.
  * 
  * Shows UI for HatFilter
  * 
  * @author p.baniukiewicz
- * @date 8 Feb 2016
  *
  */
 public class HatFilter_run {
@@ -72,10 +67,9 @@ public class HatFilter_run {
 }
 
 /**
- * Wrapper for HatFilter that allows to access private member \c pluginWnd
+ * Wrapper for HatFilter that allows to access private member pluginWnd
  * 
  * @author p.baniukiewicz
- * @date 8 Feb 2016
  *
  */
 class HatFilterInst extends HatSnakeFilter_ {
