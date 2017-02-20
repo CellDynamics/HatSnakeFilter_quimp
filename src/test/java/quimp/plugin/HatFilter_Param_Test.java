@@ -16,10 +16,10 @@ import org.scijava.vecmath.Point2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
-import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
-import uk.ac.warwick.wsbc.QuimP.plugin.utils.DataLoader;
-import uk.ac.warwick.wsbc.QuimP.plugin.utils.RoiSaver;
+import uk.ac.warwick.wsbc.quimp.plugin.ParamList;
+import uk.ac.warwick.wsbc.quimp.plugin.QuimpPluginException;
+import uk.ac.warwick.wsbc.quimp.plugin.utils.DataLoader;
+import uk.ac.warwick.wsbc.quimp.plugin.utils.RoiSaver;
 
 /**
  * Parameterised test for HatFilter

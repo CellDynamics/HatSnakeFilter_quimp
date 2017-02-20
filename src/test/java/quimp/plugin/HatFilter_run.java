@@ -10,8 +10,8 @@ import javax.swing.JFrame;
 
 import org.scijava.vecmath.Point2d;
 
-import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
-import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
+import uk.ac.warwick.wsbc.quimp.plugin.ParamList;
+import uk.ac.warwick.wsbc.quimp.plugin.QuimpPluginException;
 
 /**
  * Test class for HatFilter UI.

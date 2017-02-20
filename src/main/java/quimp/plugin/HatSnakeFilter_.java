@@ -31,15 +31,15 @@ import org.scijava.vecmath.Vector2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.warwick.wsbc.QuimP.PropertyReader;
-import uk.ac.warwick.wsbc.QuimP.ViewUpdater;
-import uk.ac.warwick.wsbc.QuimP.geom.BasicPolygons;
-import uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPluginSynchro;
-import uk.ac.warwick.wsbc.QuimP.plugin.ParamList;
-import uk.ac.warwick.wsbc.QuimP.plugin.QuimpPluginException;
-import uk.ac.warwick.wsbc.QuimP.plugin.snakes.IQuimpBOAPoint2dFilter;
-import uk.ac.warwick.wsbc.QuimP.plugin.utils.IPadArray;
-import uk.ac.warwick.wsbc.QuimP.plugin.utils.QWindowBuilder;
+import uk.ac.warwick.wsbc.quimp.PropertyReader;
+import uk.ac.warwick.wsbc.quimp.ViewUpdater;
+import uk.ac.warwick.wsbc.quimp.geom.BasicPolygons;
+import uk.ac.warwick.wsbc.quimp.plugin.IQuimpPluginSynchro;
+import uk.ac.warwick.wsbc.quimp.plugin.ParamList;
+import uk.ac.warwick.wsbc.quimp.plugin.QuimpPluginException;
+import uk.ac.warwick.wsbc.quimp.plugin.snakes.IQuimpBOAPoint2dFilter;
+import uk.ac.warwick.wsbc.quimp.plugin.utils.IPadArray;
+import uk.ac.warwick.wsbc.quimp.plugin.utils.QWindowBuilder;
 
 /**
  * Implementation of HatFilter for removing convexes from polygon.
@@ -176,7 +176,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * according to a clockwise or anti-clockwise direction
      * 
      * @param data Polygon points (can be null)
-     * @see uk.ac.warwick.wsbc.QuimP.plugin.snakes.IQuimpBOASnakeFilter#attachData(uk.ac.warwick.wsbc.QuimP.Snake)
+     * @see uk.ac.warwick.wsbc.quimp.plugin.snakes.IQuimpBOASnakeFilter#attachData(uk.ac.warwick.wsbc.quimp.Snake)
      */
     @Override
     public void attachData(List<Point2d> data) {
@@ -432,7 +432,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * This method should return a flag word that specifies the filters capabilities.
      * 
      * @return Configuration codes
-     * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpCorePlugin
+     * @see uk.ac.warwick.wsbc.quimp.plugin.IQuimpCorePlugin
      */
     @Override
     public int setup() {
@@ -453,7 +453,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
      * @param par configuration as pairs <key,val>. Keys are defined by plugin creator and plugin
      *        caller do not modify them.
      * @throws QuimpPluginException on wrong parameters list or wrong parameter conversion
-     * @see uk.ac.warwick.wsbc.QuimP.plugin.IQuimpPlugin#setPluginConfig(ParamList)
+     * @see uk.ac.warwick.wsbc.quimp.plugin.IQuimpPlugin#setPluginConfig(ParamList)
      */
     @Override
     public void setPluginConfig(final ParamList par) throws QuimpPluginException {
@@ -481,10 +481,11 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     }
 
     @Override
-    public void showUI(boolean val) {
+    public int showUI(boolean val) {
         LOGGER.trace("Got message to show UI");
         if (toggleWindow(val) == true)
             recalculatePlugin();
+        return 0;
     }
 
     /**
