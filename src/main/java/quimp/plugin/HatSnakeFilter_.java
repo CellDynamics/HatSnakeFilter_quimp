@@ -481,7 +481,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   }
 
   @Override
-  public int showUI(boolean val) {
+  public int showUi(boolean val) {
     LOGGER.trace("Got message to show UI");
     if (toggleWindow(val) == true)
       recalculatePlugin();
@@ -700,7 +700,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
 /**
  * Helper class supporting scaling and fitting polygon to DrawWindow
  * 
- * This class is strictly TreeSet related. equals method does not assure correct comparison
+ * <p>This class is strictly TreeSet related. equals method does not assure correct comparison
  * 
  * @author p.baniukiewicz
  *
@@ -718,16 +718,16 @@ class ExPolygon extends Polygon {
    */
   public ExPolygon(List<? extends Tuple2d> data) {
     // convert to polygon
-    for (Tuple2d v : data)
+    for (Tuple2d v : data) {
       addPoint((int) Math.round(v.getX()), (int) Math.round(v.getY()));
+    }
     initbounds = new Rectangle(getBounds()); // remember original size
     scale = 1;
   }
 
   /**
-   * Scale polygon to fit in rectangular window of size
-   * 
-   * Method changes internal polygon representation. Fitting is done basing on bounding box area.
+   * Scale polygon to fit in rectangular window of size. Method changes internal polygon
+   * representation. Fitting is done basing on bounding box area.
    * 
    * @param size Size of window to fit polygon
    */
@@ -738,10 +738,11 @@ class ExPolygon extends Polygon {
     // get size of bounding box
     Rectangle2D bounds = getBounds2D();
     // set scale according to window size
-    if (bounds.getWidth() > bounds.getHeight())
+    if (bounds.getWidth() > bounds.getHeight()) {
       scale = bounds.getWidth();
-    else
+    } else {
       scale = bounds.getHeight();
+    }
     scale = size / scale;
     scale *= 0.95; // little smaller than window
     for (int i = 0; i < npoints; i++) {
@@ -758,7 +759,7 @@ class ExPolygon extends Polygon {
   /**
    * Scale polygon to fit in rectangular window of size using pre-computed bounding box and scale
    * 
-   * Use for setting next polygon on base of previous, when next has different shape but must be
+   * <p>Use for setting next polygon on base of previous, when next has different shape but must be
    * centered with previous one.
    * 
    * @param size Size of window to fit polygon
