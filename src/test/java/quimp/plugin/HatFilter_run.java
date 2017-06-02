@@ -10,8 +10,8 @@ import javax.swing.JFrame;
 
 import org.scijava.vecmath.Point2d;
 
-import uk.ac.warwick.wsbc.quimp.plugin.ParamList;
-import uk.ac.warwick.wsbc.quimp.plugin.QuimpPluginException;
+import com.github.celldynamics.quimp.plugin.ParamList;
+import com.github.celldynamics.quimp.plugin.QuimpPluginException;
 
 /**
  * Test class for HatFilter UI.
@@ -23,47 +23,47 @@ import uk.ac.warwick.wsbc.quimp.plugin.QuimpPluginException;
  */
 public class HatFilter_run {
 
-    /**
-     * @param args
-     * @throws QuimpPluginException
-     * @throws InterruptedException
-     */
-    @SuppressWarnings("serial")
-    public static void main(String[] args) throws QuimpPluginException, InterruptedException {
-        List<Point2d> input;
-        // test data
-        input = new ArrayList<>();
-        input.add(new Point2d(923, 700));
-        input.add(new Point2d(577.5, 1175));
-        input.add(new Point2d(18, 993));
-        input.add(new Point2d(18, 406));
-        input.add(new Point2d(577, 224));
-        // input.add(new Vector2d( 428, -4.87));
-        // input.add(new Vector2d( 3.11, -3.9));
+  /**
+   * @param args
+   * @throws QuimpPluginException
+   * @throws InterruptedException
+   */
+  @SuppressWarnings("serial")
+  public static void main(String[] args) throws QuimpPluginException, InterruptedException {
+    List<Point2d> input;
+    // test data
+    input = new ArrayList<>();
+    input.add(new Point2d(923, 700));
+    input.add(new Point2d(577.5, 1175));
+    input.add(new Point2d(18, 993));
+    input.add(new Point2d(18, 406));
+    input.add(new Point2d(577, 224));
+    // input.add(new Vector2d( 428, -4.87));
+    // input.add(new Vector2d( 3.11, -3.9));
 
-        // create instance of hatfilter
-        HatFilterInst hf = new HatFilterInst();
-        hf.attachData(input);
-        hf.setPluginConfig(new ParamList() {
-            {
-                put("window", "15");
-                put("pnum", "1");
-                put("alev", "0.0"); // case insensitive
-            }
-        });
-        CountDownLatch startSignal = new CountDownLatch(1);
-        hf.pluginWnd.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        hf.pluginWnd.addWindowListener(new WindowAdapter() {
-            @Override
-            // This method will be called when BOA_ window is closed
-            public void windowClosing(WindowEvent arg0) {
-                startSignal.countDown(); // decrease latch by 1
-            }
-        });
-        hf.toggleWindow(true); // show window
-        // main thread waits here until Latch reaches 0
-        startSignal.await();
-    }
+    // create instance of hatfilter
+    HatFilterInst hf = new HatFilterInst();
+    hf.attachData(input);
+    hf.setPluginConfig(new ParamList() {
+      {
+        put("window", "15");
+        put("pnum", "1");
+        put("alev", "0.0"); // case insensitive
+      }
+    });
+    CountDownLatch startSignal = new CountDownLatch(1);
+    hf.pluginWnd.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    hf.pluginWnd.addWindowListener(new WindowAdapter() {
+      @Override
+      // This method will be called when BOA_ window is closed
+      public void windowClosing(WindowEvent arg0) {
+        startSignal.countDown(); // decrease latch by 1
+      }
+    });
+    hf.toggleWindow(true); // show window
+    // main thread waits here until Latch reaches 0
+    startSignal.await();
+  }
 }
 
 /**
@@ -74,11 +74,11 @@ public class HatFilter_run {
  */
 class HatFilterInst extends HatSnakeFilter_ {
 
-    public JFrame pluginWnd;
+  public JFrame pluginWnd;
 
-    public HatFilterInst() {
-        super();
-        this.pluginWnd = super.pluginWnd;
-    }
+  public HatFilterInst() {
+    super();
+    this.pluginWnd = super.pluginWnd;
+  }
 
 }

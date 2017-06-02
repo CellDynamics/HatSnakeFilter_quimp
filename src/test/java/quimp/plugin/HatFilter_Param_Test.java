@@ -22,10 +22,10 @@ import org.scijava.vecmath.Point2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.warwick.wsbc.quimp.plugin.ParamList;
-import uk.ac.warwick.wsbc.quimp.plugin.QuimpPluginException;
-import uk.ac.warwick.wsbc.quimp.utils.test.DataLoader;
-import uk.ac.warwick.wsbc.quimp.utils.test.RoiSaver;
+import com.github.celldynamics.quimp.plugin.ParamList;
+import com.github.celldynamics.quimp.plugin.QuimpPluginException;
+import com.github.celldynamics.quimp.utils.test.DataLoader;
+import com.github.celldynamics.quimp.utils.test.RoiSaver;
 
 /**
  * Parameterised test for HatFilter

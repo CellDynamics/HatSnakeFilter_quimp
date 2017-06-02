@@ -31,15 +31,15 @@ import org.scijava.vecmath.Vector2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.warwick.wsbc.quimp.PropertyReader;
-import uk.ac.warwick.wsbc.quimp.ViewUpdater;
-import uk.ac.warwick.wsbc.quimp.geom.BasicPolygons;
-import uk.ac.warwick.wsbc.quimp.plugin.IQuimpPluginSynchro;
-import uk.ac.warwick.wsbc.quimp.plugin.ParamList;
-import uk.ac.warwick.wsbc.quimp.plugin.QuimpPluginException;
-import uk.ac.warwick.wsbc.quimp.plugin.snakes.IQuimpBOAPoint2dFilter;
-import uk.ac.warwick.wsbc.quimp.plugin.utils.IPadArray;
-import uk.ac.warwick.wsbc.quimp.plugin.utils.QWindowBuilder;
+import com.github.celldynamics.quimp.PropertyReader;
+import com.github.celldynamics.quimp.ViewUpdater;
+import com.github.celldynamics.quimp.geom.BasicPolygons;
+import com.github.celldynamics.quimp.plugin.IQuimpPluginSynchro;
+import com.github.celldynamics.quimp.plugin.ParamList;
+import com.github.celldynamics.quimp.plugin.QuimpPluginException;
+import com.github.celldynamics.quimp.plugin.snakes.IQuimpBOAPoint2dFilter;
+import com.github.celldynamics.quimp.plugin.utils.IPadArray;
+import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
 
 /**
  * Implementation of HatFilter for removing convexes from polygon.
@@ -176,7 +176,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
    * according to a clockwise or anti-clockwise direction
    * 
    * @param data Polygon points (can be null)
-   * @see uk.ac.warwick.wsbc.quimp.plugin.snakes.IQuimpBOASnakeFilter#attachData(uk.ac.warwick.wsbc.quimp.Snake)
+   * @see com.github.celldynamics.quimp.plugin.snakes.IQuimpBOASnakeFilter#attachData(com.github.celldynamics.quimp.Snake)
    */
   @Override
   public void attachData(List<Point2d> data) {
@@ -258,7 +258,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
       LOGGER.trace("Wcirc " + tmpCirc);
       circ.add(tmpCirc); // store weighted circularity for shape without window
       // check if points of window are convex according to shape without these points
-      convex.add(bp.isanyPointInside(pointsnowindow, pointswindow)); // true if concave
+      convex.add(bp.areAllPointsInside(pointsnowindow, pointswindow)); // true if concave
       LOGGER.trace("con: " + convex.get(convex.size() - 1));
       // move window to next position
       Collections.rotate(points, -1); // rotates by -1 what means that on first n positions
@@ -432,7 +432,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
    * This method should return a flag word that specifies the filters capabilities.
    * 
    * @return Configuration codes
-   * @see uk.ac.warwick.wsbc.quimp.plugin.IQuimpCorePlugin
+   * @see com.github.celldynamics.quimp.plugin.IQuimpCorePlugin
    */
   @Override
   public int setup() {
@@ -453,7 +453,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
    * @param par configuration as pairs <key,val>. Keys are defined by plugin creator and plugin
    *        caller do not modify them.
    * @throws QuimpPluginException on wrong parameters list or wrong parameter conversion
-   * @see uk.ac.warwick.wsbc.quimp.plugin.IQuimpPlugin#setPluginConfig(ParamList)
+   * @see com.github.celldynamics.quimp.plugin.IQuimpPlugin#setPluginConfig(ParamList)
    */
   @Override
   public void setPluginConfig(final ParamList par) throws QuimpPluginException {
