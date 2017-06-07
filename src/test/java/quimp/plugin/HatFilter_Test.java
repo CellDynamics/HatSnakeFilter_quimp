@@ -1,5 +1,6 @@
 package quimp.plugin;
 
+import static com.github.baniuk.ImageJTestSuite.dataaccess.ResourceLoader.loadResource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -19,9 +20,9 @@ import org.scijava.vecmath.Point2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.baniuk.ImageJTestSuite.dataaccess.DataLoader;
 import com.github.celldynamics.quimp.plugin.ParamList;
 import com.github.celldynamics.quimp.plugin.QuimpPluginException;
-import com.github.celldynamics.quimp.utils.test.DataLoader;
 import com.github.celldynamics.quimp.utils.test.RoiSaver;
 
 /**
@@ -74,10 +75,11 @@ public class HatFilter_Test {
     for (int i = 0; i < 20; i++)
       lininput.add(new Point2d(i, i));
 
-    circ = new DataLoader(HatFilter_Param_Test
-            .loadResource(getClass().getClassLoader(), "testData_circle.dat").toString()).getData();
-    prot = new DataLoader(HatFilter_Param_Test
-            .loadResource(getClass().getClassLoader(), "testData_prot.dat").toString()).getData();
+    circ = new DataLoader(
+            loadResource(getClass().getClassLoader(), "testData_circle.dat").toString())
+                    .getListofPoints();
+    prot = new DataLoader(loadResource(getClass().getClassLoader(), "testData_prot.dat").toString())
+            .getListofPoints();
   }
 
   /**

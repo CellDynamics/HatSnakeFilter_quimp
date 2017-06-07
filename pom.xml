@@ -3,8 +3,8 @@
   <parent>
     <groupId>com.github.celldynamics</groupId>
     <artifactId>pom-quimp-plugin</artifactId>
-    <version>17.06.01</version>
-    <relativePath />
+    <version>17.06.02-SNAPSHOT</version>
+    <relativePath/>
     <!-- http://stackoverflow.com/questions/6003831/parent-relativepath-points-at-my-com-mycompanymyproject-instead-of-org-apache -->
   </parent>
   <!-- Project's coordinates -->
@@ -118,6 +118,22 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.github.baniuk</groupId>
+      <artifactId>ImageJTestSuite</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>com.github.celldynamics.quimp</groupId>
       <artifactId>QuimP_</artifactId>
     </dependency>
@@ -140,14 +156,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
     </dependency>
   </dependencies>
   <reporting>

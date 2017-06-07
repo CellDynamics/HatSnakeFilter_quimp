@@ -1,16 +1,12 @@
 package quimp.plugin;
 
+import static com.github.baniuk.ImageJTestSuite.dataaccess.ResourceLoader.loadResource;
+
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -22,9 +18,9 @@ import org.scijava.vecmath.Point2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.baniuk.ImageJTestSuite.dataaccess.DataLoader;
 import com.github.celldynamics.quimp.plugin.ParamList;
 import com.github.celldynamics.quimp.plugin.QuimpPluginException;
-import com.github.celldynamics.quimp.utils.test.DataLoader;
 import com.github.celldynamics.quimp.utils.test.RoiSaver;
 
 /**
@@ -77,7 +73,8 @@ public class HatFilter_Param_Test {
   @Before
   public void setUp() throws Exception {
     String tf = testfileName.getFileName().toString();
-    testcase = new DataLoader(loadResource(getClass().getClassLoader(), tf).toString()).getData();
+    testcase = new DataLoader(loadResource(getClass().getClassLoader(), tf).toString())
+            .getListofPoints();
   }
 
   /**
@@ -85,47 +82,6 @@ public class HatFilter_Param_Test {
    */
   @After
   public void tearDown() throws Exception {
-  }
-
-  /**
-   * Load resource file from either jar or filesystem.
-   * 
-   * <p>If class loader is an object run from jar, this method will make binary copy of resource in
-   * temporary folder and return path to it.
-   * 
-   * <p>This code is taken from
-   * https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
-   * 
-   * @param c class loader
-   * @param resource resource name and relative path
-   * @return path to resource file
-   */
-  public static Path loadResource(ClassLoader c, String resource) {
-    File file = null;
-    URL res = c.getResource(resource);
-    if (res.toString().startsWith("jar:")) {
-      try {
-        InputStream input = c.getResourceAsStream(resource);
-        file = File.createTempFile(new Date().getTime() + "", "");
-        OutputStream out = new FileOutputStream(file);
-        int read;
-        byte[] bytes = new byte[1024];
-
-        while ((read = input.read(bytes)) != -1) {
-          out.write(bytes, 0, read);
-        }
-        out.flush();
-        out.close();
-        input.close();
-        file.deleteOnExit();
-        return file.toPath();
-      } catch (IOException ex) {
-        throw new RuntimeException(ex);
-      }
-    } else {
-      // this will probably work in your IDE, but not from a JAR
-      return Paths.get(res.getFile());
-    }
   }
 
   /**
