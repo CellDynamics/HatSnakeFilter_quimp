@@ -160,9 +160,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     // configure window, names of UI elements are also names of variables
     // exported/imported by set/getPluginConfig
     uiDefinition.put("name", "HatFilter"); // name of window
-    uiDefinition.put("window", "spinner, 3, 51, 2," + Integer.toString(window));
-    uiDefinition.put("pnum", "spinner, 1, 6, 1," + Integer.toString(pnum));
-    uiDefinition.put("alev", "spinner, 0, 1,0.01," + Double.toString(alev));
+    uiDefinition.put("window", "spinner: 3: 51: 2:" + Integer.toString(window));
+    uiDefinition.put("pnum", "spinner: 1: 6: 1:" + Integer.toString(pnum));
+    uiDefinition.put("alev", "spinner: 0: 1:0.01:" + Double.toString(alev));
     buildWindow(uiDefinition); // construct ui (not shown yet)
     points = null; // not attached yet
     pout = null; // not calculated yet
