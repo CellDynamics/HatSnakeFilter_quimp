@@ -114,15 +114,16 @@ import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
  * candidate points are outside the original contour formed without these points.
  * <li>current <i>rank</i> (<i>circ</i>) is greater than <i>alev</i>
  * </ol>
- * If all above criterion are meet the window <l;u> is stored in <i>ind2rem</i>. Windows on end of
- * data are wrapped by dividing them for two sub-windows: <w;end> and <0;c> otherwise they may cover
+ * If all above criterion are meet the window [lower;upper] is stored in <i>ind2rem</i>. Windows on
+ * end of
+ * data are wrapped by dividing them for two sub-windows: [w;end] and [0;c] otherwise they may cover
  * the whole range (e.g. <10;3> does not stand for window from 10 wrapped to 3 but window from 3 to
  * 10).
- * <p>
- * The second step is repeated until \c pnum object will be found or end of candidates will be
+ * 
+ * <p>The second step is repeated until pnum object will be found or end of candidates will be
  * reached.
- * <p>
- * <H2>Third step</H2> In third step every point from original contour is tested for including in
+ * 
+ * <p><H2>Third step</H2> In third step every point from original contour is tested for including in
  * array <i>ind2rem</i> that contains ranges of indexes to remove. Points on index that is not
  * included in any of ranges stored in <i>ind2rem</i> are copied to output.
  * 
@@ -131,7 +132,7 @@ import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
 public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dFilter, IPadArray,
         ChangeListener, ActionListener, IQuimpPluginSynchro {
   static final Logger LOGGER = LoggerFactory.getLogger(HatSnakeFilter_.class.getName());
-  private final int DRAW_SIZE = 200; //!< size of draw area in window
+  private final int drawSize = 200; // size of draw area in window
 
   private int window; // filter's window size
   private int pnum; // how many protrusions to remove
@@ -139,7 +140,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   private List<Point2d> points; // original contour passed from QuimP
   private ParamList uiDefinition; // Definition of UI for this plugin
   private DrawPanel dp; // Here we will draw. This panel is plot in place of help field
-  private ExPolygon p; // representation of snake as polygon
+  private ExPolygon snakePolygon; // representation of snake as polygon
   private ExPolygon pout; // output polygon based on \c out
   private List<Point2d> out; // output after filtering
   private JTextArea logArea;
@@ -172,11 +173,10 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Attach data to process.
    * 
-   * Data are as list of vectors defining points of polygon. Passed points should be sorted
+   * <p>Data are as list of vectors defining points of polygon. Passed points should be sorted
    * according to a clockwise or anti-clockwise direction
    * 
    * @param data Polygon points (can be null)
-   * @see com.github.celldynamics.quimp.plugin.snakes.IQuimpBOASnakeFilter#attachData(com.github.celldynamics.quimp.Snake)
    */
   @Override
   public void attachData(List<Point2d> data) {
@@ -187,15 +187,16 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
       LOGGER.info("No data attached");
       return;
     }
-    p = new ExPolygon(data); // create polygon from points
-    p.fitPolygon(DRAW_SIZE); // adjust its size to draw window
+    snakePolygon = new ExPolygon(data); // create polygon from points
+    snakePolygon.fitPolygon(drawSize); // adjust its size to draw window
 
   }
 
   /**
    * Main filter runner.
    * 
-   * This version assumes that user clicked Apply button to populate data from UI to plugin or any
+   * <p>This version assumes that user clicked Apply button to populate data from UI to plugin or
+   * any
    * other ui element. User can expect that points will be always valid but they optionally may
    * have 0 length.
    * 
@@ -211,8 +212,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
             alev));
 
     BasicPolygons bp = new BasicPolygons(); // provides geometry processing
-    List<Point2d> out = new ArrayList<Point2d>(); // output table for plotting temporary
-                                                  // results of filter
+    // output table for plotting temporary results of filter
+    List<Point2d> out = new ArrayList<Point2d>();
     // check input conditions
     if (window % 2 == 0 || window < 0) {
       throw new QuimpPluginException("Window must be uneven, positive and larger than 0");
@@ -229,18 +230,15 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     if (alev < 0) {
       throw new QuimpPluginException("Acceptacne level should be positive");
     }
-
-    WindowIndRange indexTest = new WindowIndRange(); // temporary variable for keeping window
-                                                     // currently tested for containing in
-                                                     // ind2rem
+    // temporary variable for keeping window currently tested for containing in ind2rem
+    WindowIndRange indexTest = new WindowIndRange();
     // Step 1 - Build circularity table
-    ArrayList<Double> circ = new ArrayList<Double>(); // array to store circularity for window
-                                                      // positions. Index is related to window
-                                                      // position (negative shift in rotate)
-    ArrayList<Boolean> convex = new ArrayList<Boolean>(); // store information if points for
-                                                          // window at r position are convex
-                                                          // compared to shape without these
-                                                          // points
+    // array to store circularity for window positions. Index is related to window position
+    // (negative shift in rotate)
+    ArrayList<Double> circ = new ArrayList<Double>();
+    // store information if points for window at r position are convex compared to shape without
+    // these points
+    ArrayList<Boolean> convex = new ArrayList<Boolean>();
 
     double tmpCirc;
     for (int r = 0; r < points.size(); r++) {
@@ -270,25 +268,28 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     }
     // normalize circularity to 1
     double maxCirc = Collections.max(circ);
-    for (int r = 0; r < circ.size(); r++)
+    for (int r = 0; r < circ.size(); r++) {
       circ.set(r, circ.get(r) / maxCirc);
+    }
 
     // Step 2 - Check criterion for all windows
-    TreeSet<WindowIndRange> ind2rem = new TreeSet<>(); // <l;u> range of indexes to remove
-    ArrayList<Double> circsorted = new ArrayList<>(circ); // need sorted but the old one as well
-                                                          // to identify windows positions
+    TreeSet<WindowIndRange> ind2rem = new TreeSet<>(); // <lower;upper> range of indexes to remove
+    // need sorted but the old one as well to identify windows positions
+    ArrayList<Double> circsorted = new ArrayList<>(circ);
     circsorted.sort(Collections.reverseOrder()); // sort in descending order
     LOGGER.trace("cirs: " + circsorted.toString());
     LOGGER.trace("circ: " + circ.toString());
 
-    if (circsorted.get(0) < alev) // if maximal circularity smaller than acceptance level
+    if (circsorted.get(0) < alev) {
       return points; // just return non-modified data;
+    }
 
     int found = 0; // how many protrusions we have found already
-    int i = 0; // current index in circsorted - number of window to analyze. Real position of
-               // window on data can be retrieved by finding value from sorted array circularity
-               // in non sorted, where order of data is related to window position starting
-               // from 0 for most left point of window
+    // current index in circsorted - number of window to analyze. Real position of
+    // window on data can be retrieved by finding value from sorted array circularityin non sorted,
+    // where order of data is related to window position starting from 0 for most left point of
+    // window
+    int i = 0;
     boolean contains; // temporary result of test if current window is included in any prev
     while (found < pnum) { // do as long as we find pnum protrusions (or to end of candidates)
       if (i >= circsorted.size()) { // no more data to check, probably we have less prot. pnum
@@ -296,8 +297,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
         break;
       }
       if (found > 0) {
-        if (circsorted.get(i) < alev) // if ith circularity smaller than limit
-          break; // stop searching because all i+n are smaller as well
+        if (circsorted.get(i) < alev) { // if ith circularity smaller than limit
+          break;
+        } // stop searching because all i+n are smaller as well
         // find where it was before sorting and store in window positions
         int startpos = circ.indexOf(circsorted.get(i));
         // check if we already have this index in list indexes to remove
@@ -310,8 +312,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
           indexTest.setRange(startpos, startpos + window - 1);
           contains = ind2rem.contains(indexTest);
         }
-        if (!contains && !convex.get(startpos)) {// this window doesnt overlap with those
-                                                 // found already and it is convex
+        // this window doesnt overlap with those ound already and it is convex
+        if (!contains && !convex.get(startpos)) {
           // store range of indexes that belongs to window
           if (startpos + window - 1 >= points.size()) { // as prev split to two windows
             // if we are on the end of data
@@ -325,7 +327,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
                   + points.get(startpos).toString());
           found++;
           i++;
-        } else {// go to next candidate in sorted circularities
+        } else { // go to next candidate in sorted circularities
           i++;
         }
       } else { // first candidate always accepted
@@ -350,9 +352,10 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     // Step 3 - remove selected windows from input data
     // array will be copied to new one skipping points to remove
     for (i = 0; i < points.size(); i++) {
-      indexTest.setSame(i); // set upper and lower index to the same value - allows to test
-                            // particular index for its presence in any defined range
-      if (!ind2rem.contains(indexTest)) {// check if any window position (l and u bound)
+      // set upper and lower index to the same value - allows to test particular index for its
+      // presence in any defined range
+      indexTest.setSame(i);
+      if (!ind2rem.contains(indexTest)) { // check if any window position (lower and upper bound)
         out.add(new Point2d(points.get(i)));
       } // include tested point. Copy it to new array if not
     }
@@ -362,7 +365,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Calculate circularity of polygon.
    * 
-   * Circularity is computed as: \f[ circ=\frac{4*\pi*A}{P^2} \f] where \f$A\f$ is polygon area
+   * <p>Circularity is computed as: \f[ circ=\frac{4*\pi*A}{P^2} \f] where \f$A\f$ is polygon area
    * and \f$P\f$ is its perimeter
    * 
    * @param p Polygon vertices
@@ -381,14 +384,16 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Calculates weighting based on distribution of window points.
    * 
-   * Calculates center of mass of window points and then standard deviations of lengths between
+   * <p>Calculates center of mass of window points and then standard deviations of lengths between
    * this point and every other point. Cumulated distributions like protrusions give smaller
    * values than elongated ones.
    * 
-   * If input polygon <i>p</i> (which is only part of whole cell shape) is defective, i.e its
+   * <p>If input polygon <i>snakePolygon</i> (which is only part of whole cell shape) is defective,
+   * i.e
+   * its
    * edges cross, the weight is calculated using middle vector defined as mean of coordinates.
    * 
-   * @param p Polygon vertices
+   * @param snakePolygon Polygon vertices
    * @return Weight
    */
   private double getWeighting(final List<Point2d> p) {
@@ -398,7 +403,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     try { // check if input polygon is correct
       middle = new Vector2d(bp.polygonCenterOfMass(p));
     } catch (IllegalArgumentException e) { // if not get middle point as mean
-      double mx = 0, my = 0;
+      double mx = 0;
+      double my = 0;
       for (Point2d v : p) {
         mx += v.x;
         my += v.y;
@@ -414,13 +420,15 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     }
     // get mean
     double mean = 0;
-    for (double d : len)
+    for (double d : len) {
       mean += d;
+    }
     mean /= p.size();
     // get std
     double std = 0;
-    for (double d : len)
+    for (double d : len) {
       std += Math.pow(d - mean, 2.0);
+    }
     std /= points.size();
     std = Math.sqrt(std);
 
@@ -450,7 +458,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
    * <li><i>sigma</i> - cut-off value (see class description)
    * </ol>
    * 
-   * @param par configuration as pairs <key,val>. Keys are defined by plugin creator and plugin
+   * @param par configuration as pairs [key,val]. Keys are defined by plugin creator and plugin
    *        caller do not modify them.
    * @throws QuimpPluginException on wrong parameters list or wrong parameter conversion
    * @see com.github.celldynamics.quimp.plugin.IQuimpPlugin#setPluginConfig(ParamList)
@@ -472,7 +480,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Transfer plugin configuration to QuimP
    * 
-   * Only parameters mapped to UI by QWindowBuilder are supported directly by getValues() Any
+   * <p>Only parameters mapped to UI by QWindowBuilder are supported directly by getValues() Any
    * other parameters created outside QWindowBuilder should be added here manually.
    */
   @Override
@@ -483,8 +491,9 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   @Override
   public int showUi(boolean val) {
     LOGGER.trace("Got message to show UI");
-    if (toggleWindow(val) == true)
+    if (toggleWindow(val) == true) {
       recalculatePlugin();
+    }
     return 0;
   }
 
@@ -504,7 +513,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Override of uk.ac.warwick.wsbc.plugin.utils.QWindowBuilder.BuildWindow()
    * 
-   * The aim is to: 1) attach listeners for spinners for preventing even numbers 2) attach
+   * <p>The aim is to: 1) attach listeners for spinners for preventing even numbers 2) attach
    * listener for build-in apply button 3) add draw field DrawPanel
    */
   @Override
@@ -530,7 +539,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
 
     // help is supported by QBuildWindow but here we moved it on different than default position
     JTextArea helpArea = new JTextArea(); // default size of text area
-    JScrollPane helpPanel = new JScrollPane(helpArea);
+
     helpArea.setEditable(false);
     helpArea.setText(
             "About plugin\n" + "Click Apply to update main view. Preview shows only last selected"
@@ -543,7 +552,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     logArea.setText("Log:\n"); // set help text
     logArea.setLineWrap(true); // with wrapping
 
-    jp1.add(helpPanel);
+    jp1.add(new JScrollPane(helpArea));
     jp1.add(logPanel);
     jp.add(jp1);
 
@@ -557,19 +566,21 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
    */
   @Override
   public void stateChanged(ChangeEvent ce) {
-    if (isWindowVisible() == true) // prevent applying default values before setPluginConfig is
-                                   // used because method is called on window creation
+    // prevent applying default values before setPluginConfig is used because method is called on
+    // window creation
+    if (isWindowVisible() == true) {
       recalculatePlugin();
+    }
   }
 
   /**
    * React on Apply button.
    * 
-   * Here Apply button copies window content into plugin structures. This is different approach
+   * <p>Here Apply button copies window content into plugin structures. This is different approach
    * than in LoessFilter and MeanFilter where window content was copied while {@link #runPlugin()}
    * command
    * 
-   * This button run plugin and creates preview of filtered data
+   * <p>This button run plugin and creates preview of filtered data
    * 
    */
   @Override
@@ -587,7 +598,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Recalculate plugin on every change of its parameter.
    * 
-   * Used only for previewing. Repaint window as well
+   * <p>Used only for previewing. Repaint window as well
    */
   private void recalculatePlugin() {
     // check if we have correct data
@@ -604,9 +615,10 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     try {
       out = runPlugin(); // may throw if no data attached this is inly to get preview
       pout = new ExPolygon(out); // create new figure from out data
-      pout.fitPolygon(DRAW_SIZE, p.initbounds, p.scale); // fit to size from original polygon,
-                                                         // modified one will be centered to
-                                                         // original one
+      // fit to size from original polygon,
+      pout.fitPolygon(drawSize, snakePolygon.initbounds, snakePolygon.scale);
+      // modified one will be centered to
+      // original one
       dp.repaint(); // repaint window
     } catch (QuimpPluginException e1) { // ignore exception in general
       LOGGER.error(e1.toString());
@@ -626,23 +638,23 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     private static final long serialVersionUID = 1L;
 
     DrawPanel() {
-      setPreferredSize(new Dimension(DRAW_SIZE, DRAW_SIZE));
+      setPreferredSize(new Dimension(drawSize, drawSize));
     }
 
     /**
      * Main plotting function.
      * 
-     * Plots two polygons, original and processed in red
+     * <p>Plots two polygons, original and processed in red
      */
     @Override
     public void paintComponent(Graphics g) {
       super.paintComponent(g);
 
       g.setColor(Color.BLACK);
-      g.fillRect(0, 0, DRAW_SIZE, DRAW_SIZE);
+      g.fillRect(0, 0, drawSize, drawSize);
       g.setColor(Color.WHITE);
       if (points != null) {
-        g.drawPolygon(p);
+        g.drawPolygon(snakePolygon);
       }
       if (pout != null) { // pout is initialized after first apply click
         g.setColor(Color.RED);
@@ -650,8 +662,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
       }
       if (points == null || pout == null) { // clera if there is no valid data
         g.setColor(Color.BLACK);
-        g.clearRect(0, 0, DRAW_SIZE, DRAW_SIZE);
-        g.fillRect(0, 0, DRAW_SIZE, DRAW_SIZE);
+        g.clearRect(0, 0, drawSize, drawSize);
+        g.fillRect(0, 0, drawSize, drawSize);
         g.setColor(Color.WHITE);
       }
 
@@ -672,7 +684,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Add action on window focus
    * 
-   * This is used for updating preview screen in plugin. When window became in focus, last snake
+   * <p>This is used for updating preview screen in plugin. When window became in focus, last snake
    * stored in ViewUpdater is gathered. This snake is updated on every action in BOA. Data from
    * ViewUpdater may be null if user deleted Snake. If there is more snakes on screen after
    * deleting Snake id=n, active became Snake id=n-1
@@ -685,8 +697,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     public void windowActivated(WindowEvent e) {
       points = qcontext.getSnakeasPoints(); // get last snake from ViewUpdater
       if (points != null) {
-        p = new ExPolygon(points); // create polygon from points
-        p.fitPolygon(DRAW_SIZE); // adjust its size to draw window
+        snakePolygon = new ExPolygon(points); // create polygon from points
+        snakePolygon.fitPolygon(drawSize); // adjust its size to draw window
         recalculatePlugin();
       } else { // if data from ViewUpdater are null, invalidate output as well and clear view
         pout = null;
@@ -695,223 +707,225 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
       super.windowActivated(e);
     }
   }
-}
-
-/**
- * Helper class supporting scaling and fitting polygon to DrawWindow
- * 
- * <p>This class is strictly TreeSet related. equals method does not assure correct comparison
- * 
- * @author p.baniukiewicz
- *
- */
-class ExPolygon extends Polygon {
-  static final Logger LOGGER = LoggerFactory.getLogger(ExPolygon.class.getName());
-  private static final long serialVersionUID = 5870934217878285135L;
-  public Rectangle initbounds; // initial size of polygon, before scaling
-  public double scale; // current scale
 
   /**
-   * Construct polygon from list of points.
+   * Helper class supporting scaling and fitting polygon to DrawWindow
    * 
-   * @param data List of points
+   * <p>This class is strictly TreeSet related. equals method does not assure correct
+   * comparison
+   * 
+   * @author snakePolygon.baniukiewicz
+   *
    */
-  public ExPolygon(List<? extends Tuple2d> data) {
-    // convert to polygon
-    for (Tuple2d v : data) {
-      addPoint((int) Math.round(v.getX()), (int) Math.round(v.getY()));
+  class ExPolygon extends Polygon {
+    private static final long serialVersionUID = 5870934217878285135L;
+    public Rectangle initbounds; // initial size of polygon, before scaling
+    public double scale; // current scale
+
+    /**
+     * Construct polygon from list of points.
+     * 
+     * @param data List of points
+     */
+    public ExPolygon(List<? extends Tuple2d> data) {
+      // convert to polygon
+      for (Tuple2d v : data) {
+        addPoint((int) Math.round(v.getX()), (int) Math.round(v.getY()));
+      }
+      initbounds = new Rectangle(getBounds()); // remember original size
+      scale = 1;
     }
-    initbounds = new Rectangle(getBounds()); // remember original size
-    scale = 1;
+
+    /**
+     * Scale polygon to fit in rectangular window of size. Method changes internal polygon
+     * representation. Fitting is done basing on bounding box area.
+     * 
+     * @param size Size of window to fit polygon
+     */
+    public void fitPolygon(double size) {
+      // set in 0,0
+      translate((int) Math.round(-initbounds.getCenterX()),
+              (int) Math.round(-initbounds.getCenterY()));
+      // get size of bounding box
+      Rectangle2D bounds = getBounds2D();
+      // set scale according to window size
+      if (bounds.getWidth() > bounds.getHeight()) {
+        scale = bounds.getWidth();
+      } else {
+        scale = bounds.getHeight();
+      }
+      scale = size / scale;
+      scale *= 0.95; // little smaller than window
+      for (int i = 0; i < npoints; i++) {
+        xpoints[i] = (int) Math.round(xpoints[i] * scale);
+        ypoints[i] = (int) Math.round(ypoints[i] * scale);
+      }
+      // center in window
+      LOGGER.debug("Scale is: " + scale + " BoundsCenters: " + bounds.getCenterX() + " "
+              + bounds.getCenterY());
+      translate((int) Math.round(bounds.getCenterX()) + (int) (size / 2),
+              (int) Math.round(bounds.getCenterY()) + (int) (size / 2));
+    }
+
+    /**
+     * Scale polygon to fit in rectangular window of size using pre-computed bounding box and scale
+     * 
+     * <p>Use for setting next polygon on base of previous, when next has different shape
+     * but must be centered with previous one.
+     * 
+     * @param size Size of window to fit polygon
+     * @param init Bounding box to fit new polygon
+     * @param scale Scale of new polygon
+     */
+    public void fitPolygon(double size, Rectangle2D init, double scale) {
+      // set in 0,0
+      this.scale = scale;
+      LOGGER.debug("fitPolygon: Scale is: " + scale + " BoundsCenters: " + init.getCenterX() + " "
+              + init.getCenterY());
+      translate((int) Math.round(-init.getCenterX()), (int) Math.round(-init.getCenterY()));
+
+      for (int i = 0; i < npoints; i++) {
+        xpoints[i] = (int) Math.round(xpoints[i] * scale);
+        ypoints[i] = (int) Math.round(ypoints[i] * scale);
+      }
+      translate((int) (size / 2), (int) (size / 2));
+    }
   }
 
   /**
-   * Scale polygon to fit in rectangular window of size. Method changes internal polygon
-   * representation. Fitting is done basing on bounding box area.
+   * Class holding lower and upper index of window. Supports comparisons.
    * 
-   * @param size Size of window to fit polygon
-   */
-  public void fitPolygon(double size) {
-    // set in 0,0
-    translate((int) Math.round(-initbounds.getCenterX()),
-            (int) Math.round(-initbounds.getCenterY()));
-    // get size of bounding box
-    Rectangle2D bounds = getBounds2D();
-    // set scale according to window size
-    if (bounds.getWidth() > bounds.getHeight()) {
-      scale = bounds.getWidth();
-    } else {
-      scale = bounds.getHeight();
-    }
-    scale = size / scale;
-    scale *= 0.95; // little smaller than window
-    for (int i = 0; i < npoints; i++) {
-      xpoints[i] = (int) Math.round(xpoints[i] * scale);
-      ypoints[i] = (int) Math.round(ypoints[i] * scale);
-    }
-    // center in window
-    LOGGER.debug("Scale is: " + scale + " BoundsCenters: " + bounds.getCenterX() + " "
-            + bounds.getCenterY());
-    translate((int) Math.round(bounds.getCenterX()) + (int) (size / 2),
-            (int) Math.round(bounds.getCenterY()) + (int) (size / 2));
-  }
-
-  /**
-   * Scale polygon to fit in rectangular window of size using pre-computed bounding box and scale
-   * 
-   * <p>Use for setting next polygon on base of previous, when next has different shape but must be
-   * centered with previous one.
-   * 
-   * @param size Size of window to fit polygon
-   * @param init Bounding box to fit new polygon
-   * @param scale Scale of new polygon
-   */
-  public void fitPolygon(double size, Rectangle2D init, double scale) {
-    // set in 0,0
-    this.scale = scale;
-    LOGGER.debug("fitPolygon: Scale is: " + scale + " BoundsCenters: " + init.getCenterX() + " "
-            + init.getCenterY());
-    translate((int) Math.round(-init.getCenterX()), (int) Math.round(-init.getCenterY()));
-
-    for (int i = 0; i < npoints; i++) {
-      xpoints[i] = (int) Math.round(xpoints[i] * scale);
-      ypoints[i] = (int) Math.round(ypoints[i] * scale);
-    }
-    translate((int) (size / 2), (int) (size / 2));
-  }
-}
-
-/**
- * Class holding lower and upper index of window. Supports comparisons.
- * 
- * Two ranges <l;u> and <l1;u1> are equal if any of these conditions is met:
- * <ol>
- * <li>they overlap
- * <li>they are the same
- * <li>one is included in second
- * </ol>
- * 
- * @author p.baniukiewicz
- * @see WindowIndRange#compareTo(Object)
- */
-class WindowIndRange implements Comparable<Object> {
-  public int l, u;
-
-  public WindowIndRange() {
-    u = 0;
-    l = 0;
-  }
-
-  /**
-   * Create pair of indexes that define window
-   * 
-   * @param l lower index
-   * @param u upper index
-   */
-  WindowIndRange(int l, int u) {
-    setRange(l, u);
-  }
-
-  @Override
-  public String toString() {
-    return "{" + l + "," + u + "}";
-  }
-
-  public int hashCode() {
-    int result = 1;
-    result = 31 * result + l;
-    result = 31 * result + u;
-    return result;
-  }
-
-  /**
-   * Compare two WindowIndRange objects.
-   * 
-   * @param obj
-   * @return true only if ranges does not overlap
-   */
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-
-    final WindowIndRange other = (WindowIndRange) obj;
-    if (u < other.l) {
-      return true;
-    } else if (l > other.u) {
-      return true;
-    } else {
-      return false;
-    }
-
-  }
-
-  /**
-   * Compare two WindowIndRange objects.
-   * 
-   * The following rules of comparison are used:
+   * <p>Two ranges [lower;upper] and [l1;u1] are equal if any of these conditions is met:
    * <ol>
-   * <li>If range1 is below range2 they are not equal
-   * <li>If range1 is above range2 they are not equal
-   * </ol>
-   * <p>
-   * They are equal in all other cases:
-   * <ol>
-   * <li>They are sticked
-   * <li>One includes other
-   * <li>They overlap
+   * <li>they overlap
+   * <li>they are the same
+   * <li>one is included in second
    * </ol>
    * 
-   * @param obj Object to compare to this
-   * @return -1,0,1 expressing relations in windows positions
+   * @author snakePolygon.baniukiewicz
+   * @see WindowIndRange#compareTo(Object)
    */
-  @Override
-  public int compareTo(Object obj) {
-    final WindowIndRange other = (WindowIndRange) obj;
-    if (this == obj) {
-      return 0;
+  class WindowIndRange implements Comparable<Object> {
+    public int lower;
+    public int upper;
+
+    public WindowIndRange() {
+      upper = 0;
+      lower = 0;
     }
 
-    if (u < other.l) {
-      return -1;
-    } else if (l > other.u) {
-      return 1;
-    } else {
-      return 0;
+    /**
+     * Create pair of indexes that define window.
+     * 
+     * @param lower lower index
+     * @param upper upper index
+     */
+    WindowIndRange(int l, int u) {
+      setRange(l, u);
     }
-  }
 
-  /**
-   * Sets upper and lower indexes to the same value.
-   * 
-   * @param i Value to set for u and l
-   */
-  public void setSame(int i) {
-    l = i;
-    u = i;
-  }
-
-  /**
-   * Set pair of indexes that define window assuring that l<u
-   * 
-   * @param l lower index, always smaller
-   * @param u upper index
-   */
-  public void setRange(int l, int u) {
-    if (l > u) {
-      this.l = u;
-      this.u = l;
-    } else {
-      this.l = l;
-      this.u = u;
+    @Override
+    public String toString() {
+      return "{" + lower + "," + upper + "}";
     }
+
+    public int hashCode() {
+      int result = 1;
+      result = 31 * result + lower;
+      result = 31 * result + upper;
+      return result;
+    }
+
+    /**
+     * Compare two WindowIndRange objects.
+     * 
+     * @param obj object to compare
+     * @return true only if ranges does not overlap
+     */
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+
+      final WindowIndRange other = (WindowIndRange) obj;
+      if (upper < other.lower) {
+        return true;
+      } else if (lower > other.upper) {
+        return true;
+      } else {
+        return false;
+      }
+
+    }
+
+    /**
+     * Compare two WindowIndRange objects.
+     * 
+     * <p>The following rules of comparison are used:
+     * <ol>
+     * <li>If range1 is below range2 they are not equal
+     * <li>If range1 is above range2 they are not equal
+     * </ol>
+     * 
+     * <p>They are equal in all other cases:
+     * <ol>
+     * <li>They are sticked
+     * <li>One includes other
+     * <li>They overlap
+     * </ol>
+     * 
+     * @param obj Object to compare to this
+     * @return -1,0,1 expressing relations in windows positions
+     */
+    @Override
+    public int compareTo(Object obj) {
+      final WindowIndRange other = (WindowIndRange) obj;
+      if (this == obj) {
+        return 0;
+      }
+
+      if (upper < other.lower) {
+        return -1;
+      } else if (lower > other.upper) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+
+    /**
+     * Sets upper and lower indexes to the same value.
+     * 
+     * @param i Value to set for upper and lower
+     */
+    public void setSame(int i) {
+      lower = i;
+      upper = i;
+    }
+
+    /**
+     * Set pair of indexes that define window assuring that lower is smaller than upper.
+     * 
+     * @param lower lower index, always smaller
+     * @param upper upper index
+     */
+    public void setRange(int l, int u) {
+      if (l > u) {
+        this.lower = u;
+        this.upper = l;
+      } else {
+        this.lower = l;
+        this.upper = u;
+      }
+    }
+
   }
 
 }

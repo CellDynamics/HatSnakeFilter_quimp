@@ -1,6 +1,5 @@
-**/Doxygen_doc/html/
-**/Doxygen_doc/latex/
-**/Doxygen_doc/Doxygen_doc/
+**/doc-files/*_UML.png
+doc/
 
 .directory
 .DS_Store
@@ -17,6 +16,7 @@ tmp/
 local.properties
 .settings/
 .loadpath
+.sonar
 
 # Eclipse Core
 .project
@@ -62,7 +62,5 @@ hs_err_pid*
 
 build/
 
-
 target/
-*.m~
-.*.html
+.checkstyle
