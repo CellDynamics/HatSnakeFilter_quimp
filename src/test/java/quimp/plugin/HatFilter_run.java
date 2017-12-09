@@ -48,7 +48,8 @@ public class HatFilter_run {
       {
         put("window", "15");
         put("pnum", "1");
-        put("alev", "0.0"); // case insensitive
+        put("alevmin", "0.0"); // case insensitive
+        put("alevmax", "0.0"); // case insensitive
       }
     });
     CountDownLatch startSignal = new CountDownLatch(1);

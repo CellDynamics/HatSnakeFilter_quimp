@@ -44,37 +44,40 @@ import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
 /**
  * Implementation of HatFilter for removing convexes from polygon.
  * 
- * <h3>List of user parameters:</h3>
+ * <p>In general this algorithm finds specified number of protrusions in specified range of rank.
+ * 
+ * <p><h3>List of user parameters:</h3>
  * <ol>
  * <li><i>window</i> - Size of window in pixels. It is responsible for sensitivity to protrusions of
  * given size. Larger window can eliminate small and large protrusions whereas smaller window is
  * sensitive only to small protrusions.
  * <li>window should be from 3 to number of outline points.
  * <li><i>pnum</i> - Number of protrusions that will be found in outline. If not limited by
- * <i>alev</i> parameter the algorithm will eliminate <i>pnum</i> objects from outline without
+ * <i>alevmin</i> parameter the algorithm will eliminate <i>pnum</i> objects from outline without
  * considering if they are protrusions or not.
  * <li><i>pnum</i> should be from 1 to any value. Algorithm stops searching when there is no
  * candidates to remove.
- * <li><i>alev</i> - Threshold value, if circularity computed for given window position is lower
+ * <li><i>alevmin</i> - Threshold value, if circularity computed for given window position is lower
  * than threshold this window is not eliminated regarding <i>pnum</i> or its rank in circularities.
- * <li><i>alev</i> should be in range form 0 to 1, where 0 stands for accepting every candidate
+ * <li><i>alevmin</i> should be in range form 0 to 1, where 0 stands for accepting every candidate
  * </ol>
- * <p>
- * <h3>General description of algorithm:</h3> The window slides over the wrapped contour. Points
+ * 
+ * <p><h3>General description of algorithm:</h3> The window slides over the wrapped contour. Points
  * inside window for its position \a p are considered as candidates to removal from contour if they
  * meet the following criterion:
  * <ol>
  * <li>The window has achieved for position \a p circularity parameter <i>c</i> larger than
- * <i>alev</i>
+ * <i>alevmin</i>
  * <li>The window on position <i>p</i> does not touch any other previously found window.
  * <li>Points of window <i>p</i> are convex.
  * </ol>
- * <p>
- * Every window <i>p</i> has assigned a <i>rank</i>. Bigger <i>rank</i> stands for better candidate
+ * 
+ * <p>Every window <i>p</i> has assigned a <i>rank</i>. Bigger <i>rank</i> stands for better
+ * candidate
  * to remove. Algorithm tries to remove first <i>pnum</i> windows (those with biggest ranks) that
  * meet above rules.
- * <p>
- * <H3>Detailed description of algorithm</H3> The algorithm comprises of three main steps:
+ * 
+ * <p><H3>Detailed description of algorithm</H3> The algorithm comprises of three main steps:
  * <ol>
  * <li>Preparing <i>rank</i> table of candidates to remove
  * <li>Iterating over <i>rank</i> table to find <i>pnum</i> such candidates who meet rules and store
@@ -83,8 +86,8 @@ import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
  * lover and upper index of window in outline array (input).
  * <li>Forming output table without protrusions.
  * </ol>
- * <p>
- * <H2>First step</H2> The window of size <i>window</i> slides over looped data. Looping is
+ * 
+ * <p><H2>First step</H2> The window of size <i>window</i> slides over looped data. Looping is
  * performed by java.util.Collections.rotate method that shift data left copying falling out indexes
  * to end of the set (finally the window is settled in constant position between indexes
  * <0;window-1>). For each its position <i>r</i> the candidate points are deleted from original
@@ -98,13 +101,14 @@ import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
  * convex is checked. All candidate points are tested for inclusion in contour without these points.
  * This information is stored in <i>convex</i> array. Finally rank array <i>circ</i> is normalised
  * to maximum element.
- * <p>
- * <H2>Second step</H2> In second step array of ranks <i>circ</i> is sorted in descending order. For
+ * 
+ * <p><H2>Second step</H2> In second step array of ranks <i>circ</i> is sorted in descending order.
+ * For
  * every rank in sorted table the real position of window is retrieved (that gave this rank). The
  * window position is defined here by two numbers - lower and upper range of indexes covered
  * by it. The candidate points from this window are validated for criterion:
  * <ol>
- * <li><i>rank</i> must be greater than <i>alev</i>
+ * <li><i>rank</i> must be within range <i>alevmin</i> - <i>alevmax</i>
  * <li>lower and upper index of window (index means here number of polygon vertex in array) must not
  * be included in any previously found window. This checking is done by deriving own class
  * WindowIndRange with overwritten {@link WindowIndRange#compareTo(Object)} method that defines
@@ -112,7 +116,6 @@ import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
  * is considered as equal and rejected from storing in <i>ind2rem</i> array.
  * <li>candidate points must be convex. As mentioned before <i>convex</i> means that <b>all</b>
  * candidate points are outside the original contour formed without these points.
- * <li>current <i>rank</i> (<i>circ</i>) is greater than <i>alev</i>
  * </ol>
  * If all above criterion are meet the window [lower;upper] is stored in <i>ind2rem</i>. Windows on
  * end of
@@ -132,11 +135,12 @@ import com.github.celldynamics.quimp.plugin.utils.QWindowBuilder;
 public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dFilter, IPadArray,
         ChangeListener, ActionListener, IQuimpPluginSynchro {
   static final Logger LOGGER = LoggerFactory.getLogger(HatSnakeFilter_.class.getName());
-  private final int drawSize = 200; // size of draw area in window
+  private final int drawSize = 300; // size of draw area in window
 
   private int window; // filter's window size
   private int pnum; // how many protrusions to remove
-  private double alev; // minimal acceptance level
+  private double alevmin; // minimal acceptance level
+  private double alevmax; // maximal acceptance level
   private List<Point2d> points; // original contour passed from QuimP
   private ParamList uiDefinition; // Definition of UI for this plugin
   private DrawPanel dp; // Here we will draw. This panel is plot in place of help field
@@ -154,8 +158,10 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     LOGGER.trace("Entering constructor");
     this.window = 15;
     this.pnum = 1;
-    this.alev = 0;
-    LOGGER.debug("Set default parameter: window=" + window + " pnum=" + pnum + " alev=" + alev);
+    this.alevmin = 0;
+    this.alevmax = 1;
+    LOGGER.debug("Set default parameter: window=" + window + " pnum=" + pnum + " alevmin=" + alevmin
+            + " alevmax=" + alevmax);
     // create UI using QWindowBuilder
     uiDefinition = new ParamList(); // will hold ui definitions
     // configure window, names of UI elements are also names of variables
@@ -163,7 +169,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     uiDefinition.put("name", "HatFilter"); // name of window
     uiDefinition.put("window", "spinner: 3: 51: 2:" + Integer.toString(window));
     uiDefinition.put("pnum", "spinner: 1: 6: 1:" + Integer.toString(pnum));
-    uiDefinition.put("alev", "spinner: 0: 1:0.01:" + Double.toString(alev));
+    uiDefinition.put("alevmin", "spinnerd: 0: 1:5e-6:" + Double.toString(alevmin) + ":6");
+    uiDefinition.put("alevmax", "spinnerd: 0: 1:5e-6:" + Double.toString(alevmax) + ":6");
     buildWindow(uiDefinition); // construct ui (not shown yet)
     points = null; // not attached yet
     pout = null; // not calculated yet
@@ -208,8 +215,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   @Override
   public List<Point2d> runPlugin() throws QuimpPluginException {
     // internal parameters are not updated here but when user click apply
-    LOGGER.info(String.format("Run plugin with params: window %d, pnum %d, alev %f", window, pnum,
-            alev));
+    LOGGER.debug(String.format("Run plugin with params: window %d, pnum %d, alevmin %f, alevmax %f",
+            window, pnum, alevmin, alevmax));
 
     BasicPolygons bp = new BasicPolygons(); // provides geometry processing
     // output table for plotting temporary results of filter
@@ -227,7 +234,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     if (pnum <= 0) {
       throw new QuimpPluginException("Number of protrusions should be larger than 0");
     }
-    if (alev < 0) {
+    if (alevmin < 0 || alevmax < 0) {
       throw new QuimpPluginException("Acceptacne level should be positive");
     }
     // temporary variable for keeping window currently tested for containing in ind2rem
@@ -277,10 +284,12 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     // need sorted but the old one as well to identify windows positions
     ArrayList<Double> circsorted = new ArrayList<>(circ);
     circsorted.sort(Collections.reverseOrder()); // sort in descending order
-    LOGGER.trace("cirs: " + circsorted.toString());
+    // TODO circsorted contains all ranks for all positions of window. Remove those that overlap
+    // here. finaly it should hold nonoverlaping candidates only
+    LOGGER.info("cirs: " + circsorted.toString());
     LOGGER.trace("circ: " + circ.toString());
 
-    if (circsorted.get(0) < alev) {
+    if (circsorted.get(0) < alevmin) {
       return points; // just return non-modified data;
     }
 
@@ -293,13 +302,16 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     boolean contains; // temporary result of test if current window is included in any prev
     while (found < pnum) { // do as long as we find pnum protrusions (or to end of candidates)
       if (i >= circsorted.size()) { // no more data to check, probably we have less prot. pnum
-        LOGGER.warn("Can find next candidate. Use smaller window");
+        logArea.append("#" + "Can find next candidate. Use smaller window or change alev" + '\n');
         break;
       }
+      // if ith circularity beyond range
+      if (circsorted.get(i) < alevmin || circsorted.get(i) > alevmax) {
+        i++;
+        continue;
+      } // stop searching because all i+n are smaller as well
       if (found > 0) {
-        if (circsorted.get(i) < alev) { // if ith circularity smaller than limit
-          break;
-        } // stop searching because all i+n are smaller as well
+
         // find where it was before sorting and store in window positions
         int startpos = circ.indexOf(circsorted.get(i));
         // check if we already have this index in list indexes to remove
@@ -432,7 +444,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     std /= points.size();
     std = Math.sqrt(std);
 
-    LOGGER.debug("w " + std);
+    LOGGER.trace("w " + std);
     return std;
   }
 
@@ -451,7 +463,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   /**
    * Configure plugin and overrides default values.
    * 
-   * Supported keys:
+   * <p>Supported keys:
    * <ol>
    * <li><i>window</i> - size of main window
    * <li><i>crown</i> - size of inner window
@@ -468,7 +480,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     try {
       window = par.getIntValue("window");
       pnum = par.getIntValue("pnum");
-      alev = par.getDoubleValue("alev");
+      alevmin = par.getDoubleValue("alevmin");
+      alevmax = par.getDoubleValue("alevmax");
       setValues(par); // copy incoming parameters to UI
     } catch (Exception e) {
       // we should never hit this exception as parameters are not touched by caller they are
@@ -523,7 +536,8 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     // attach listeners to ui to update window on new parameters
     ((JSpinner) ui.get("Window")).addChangeListener(this); // attach listener to selected ui
     ((JSpinner) ui.get("pnum")).addChangeListener(this); // attach listener to selected ui
-    ((JSpinner) ui.get("alev")).addChangeListener(this); // attach listener to selected ui
+    ((JSpinner) ui.get("alevmin")).addChangeListener(this); // attach listener to selected ui
+    ((JSpinner) ui.get("alevmax")).addChangeListener(this); // attach listener to selected ui
     applyB.addActionListener(this); // attach listener to apply button
     // in place of CENTER pane in BorderLayout layout from super.BuildWindow
     // we create few extra controls
@@ -609,8 +623,10 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     // transfer data from ui
     window = getIntegerFromUI("window");
     pnum = getIntegerFromUI("pnum");
-    alev = getDoubleFromUI("alev");
-    LOGGER.debug(String.format("Updated from UI: window %d, pnum %d, alev %f", window, pnum, alev));
+    alevmin = getDoubleFromUI("alevmin");
+    alevmax = getDoubleFromUI("alevmax");
+    LOGGER.debug(String.format("Updated from UI: window %d, pnum %d, alevmin %f, alevmax %f",
+            window, pnum, alevmin, alevmax));
     // run plugin for set parameters
     try {
       out = runPlugin(); // may throw if no data attached this is inly to get preview
@@ -695,7 +711,11 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   class HatWindowAdapter extends WindowAdapter {
     @Override
     public void windowActivated(WindowEvent e) {
-      points = qcontext.getSnakeasPoints(); // get last snake from ViewUpdater
+      if (qcontext != null) {
+        points = qcontext.getSnakeasPoints(); // get last snake from ViewUpdater
+      } else {
+        points = null;
+      }
       if (points != null) {
         snakePolygon = new ExPolygon(points); // create polygon from points
         snakePolygon.fitPolygon(drawSize); // adjust its size to draw window
@@ -790,142 +810,6 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
       }
       translate((int) (size / 2), (int) (size / 2));
     }
-  }
-
-  /**
-   * Class holding lower and upper index of window. Supports comparisons.
-   * 
-   * <p>Two ranges [lower;upper] and [l1;u1] are equal if any of these conditions is met:
-   * <ol>
-   * <li>they overlap
-   * <li>they are the same
-   * <li>one is included in second
-   * </ol>
-   * 
-   * @author snakePolygon.baniukiewicz
-   * @see WindowIndRange#compareTo(Object)
-   */
-  class WindowIndRange implements Comparable<Object> {
-    public int lower;
-    public int upper;
-
-    public WindowIndRange() {
-      upper = 0;
-      lower = 0;
-    }
-
-    /**
-     * Create pair of indexes that define window.
-     * 
-     * @param lower lower index
-     * @param upper upper index
-     */
-    WindowIndRange(int l, int u) {
-      setRange(l, u);
-    }
-
-    @Override
-    public String toString() {
-      return "{" + lower + "," + upper + "}";
-    }
-
-    public int hashCode() {
-      int result = 1;
-      result = 31 * result + lower;
-      result = 31 * result + upper;
-      return result;
-    }
-
-    /**
-     * Compare two WindowIndRange objects.
-     * 
-     * @param obj object to compare
-     * @return true only if ranges does not overlap
-     */
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-
-      final WindowIndRange other = (WindowIndRange) obj;
-      if (upper < other.lower) {
-        return true;
-      } else if (lower > other.upper) {
-        return true;
-      } else {
-        return false;
-      }
-
-    }
-
-    /**
-     * Compare two WindowIndRange objects.
-     * 
-     * <p>The following rules of comparison are used:
-     * <ol>
-     * <li>If range1 is below range2 they are not equal
-     * <li>If range1 is above range2 they are not equal
-     * </ol>
-     * 
-     * <p>They are equal in all other cases:
-     * <ol>
-     * <li>They are sticked
-     * <li>One includes other
-     * <li>They overlap
-     * </ol>
-     * 
-     * @param obj Object to compare to this
-     * @return -1,0,1 expressing relations in windows positions
-     */
-    @Override
-    public int compareTo(Object obj) {
-      final WindowIndRange other = (WindowIndRange) obj;
-      if (this == obj) {
-        return 0;
-      }
-
-      if (upper < other.lower) {
-        return -1;
-      } else if (lower > other.upper) {
-        return 1;
-      } else {
-        return 0;
-      }
-    }
-
-    /**
-     * Sets upper and lower indexes to the same value.
-     * 
-     * @param i Value to set for upper and lower
-     */
-    public void setSame(int i) {
-      lower = i;
-      upper = i;
-    }
-
-    /**
-     * Set pair of indexes that define window assuring that lower is smaller than upper.
-     * 
-     * @param lower lower index, always smaller
-     * @param upper upper index
-     */
-    public void setRange(int l, int u) {
-      if (l > u) {
-        this.lower = u;
-        this.upper = l;
-      } else {
-        this.lower = l;
-        this.upper = u;
-      }
-    }
-
   }
 
 }
