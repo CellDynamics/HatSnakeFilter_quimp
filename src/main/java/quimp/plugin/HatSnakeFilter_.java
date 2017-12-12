@@ -276,7 +276,11 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
     // normalize circularity to 1
     double maxCirc = Collections.max(circ);
     for (int r = 0; r < circ.size(); r++) {
-      circ.set(r, circ.get(r) / maxCirc);
+      if (maxCirc != 0.0) {
+        circ.set(r, circ.get(r) / maxCirc);
+      } else {
+        circ.set(r, 0.0);
+      }
     }
 
     // Step 2 - Check criterion for all windows
@@ -600,7 +604,7 @@ public class HatSnakeFilter_ extends QWindowBuilder implements IQuimpBOAPoint2dF
   @Override
   public void actionPerformed(ActionEvent e) {
     Object b = e.getSource();
-    if (b == applyB) { // pressed apply, copy ui data to plugin
+    if (b == applyB || e.getActionCommand().equals("apply")) { // pressed apply
       // order of these two is important because updateView() externally run the whole
       // plugin and reconnects external data what updates preview and delete any recalculated
       // result.

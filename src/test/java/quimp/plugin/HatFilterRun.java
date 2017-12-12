@@ -1,12 +1,9 @@
 package quimp.plugin;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
-import javax.swing.JFrame;
 
 import org.scijava.vecmath.Point2d;
 
@@ -16,12 +13,12 @@ import com.github.celldynamics.quimp.plugin.QuimpPluginException;
 /**
  * Test class for HatFilter UI.
  * 
- * Shows UI for HatFilter
+ * <p>Shows UI for HatFilter
  * 
  * @author p.baniukiewicz
  *
  */
-public class HatFilter_run {
+public class HatFilterRun {
 
   /**
    * @param args
@@ -46,22 +43,23 @@ public class HatFilter_run {
     hf.attachData(input);
     hf.setPluginConfig(new ParamList() {
       {
-        put("window", "15");
+        put("window", "3");
         put("pnum", "1");
         put("alevmin", "0.0"); // case insensitive
-        put("alevmax", "0.0"); // case insensitive
+        put("alevmax", "1.0"); // case insensitive
       }
     });
     CountDownLatch startSignal = new CountDownLatch(1);
-    hf.pluginWnd.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    hf.pluginWnd.addWindowListener(new WindowAdapter() {
-      @Override
-      // This method will be called when BOA_ window is closed
-      public void windowClosing(WindowEvent arg0) {
-        startSignal.countDown(); // decrease latch by 1
-      }
-    });
-    hf.toggleWindow(true); // show window
+    // hf.pluginWnd1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // hf.pluginWnd1.addWindowListener(new WindowAdapter() {
+    // @Override
+    // // This method will be called when BOA_ window is closed
+    // public void windowClosing(WindowEvent arg0) {
+    // startSignal.countDown(); // decrease latch by 1
+    // }
+    // });
+    hf.showUi(true);
+    // hf.pluginWnd.setVisible(true); // show window
     // main thread waits here until Latch reaches 0
     startSignal.await();
   }
@@ -75,11 +73,20 @@ public class HatFilter_run {
  */
 class HatFilterInst extends HatSnakeFilter_ {
 
-  public JFrame pluginWnd;
-
   public HatFilterInst() {
     super();
-    this.pluginWnd = super.pluginWnd;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see quimp.plugin.HatSnakeFilter_#buildWindow(com.github.celldynamics.quimp.plugin.ParamList)
+   */
+  @Override
+  public void buildWindow(ParamList def) {
+    super.buildWindow(def);
+    WindowListener[] wl = pluginWnd.getWindowListeners();
+    pluginWnd.removeWindowListener(wl[wl.length - 1]); // this caused cleaning points stored
   }
 
 }

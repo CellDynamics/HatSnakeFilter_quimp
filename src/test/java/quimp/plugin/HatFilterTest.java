@@ -1,26 +1,33 @@
 package quimp.plugin;
 
 import static com.github.baniuk.ImageJTestSuite.dataaccess.ResourceLoader.loadResource;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.junit.After;
+import javax.swing.JButton;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.mockito.Mockito;
 import org.scijava.vecmath.Point2d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.baniuk.ImageJTestSuite.dataaccess.DataLoader;
+import com.github.celldynamics.quimp.ViewUpdater;
 import com.github.celldynamics.quimp.plugin.ParamList;
 import com.github.celldynamics.quimp.plugin.QuimpPluginException;
 import com.github.celldynamics.quimp.utils.test.RoiSaver;
@@ -31,9 +38,9 @@ import com.github.celldynamics.quimp.utils.test.RoiSaver;
  * @author p.baniukiewicz
  *
  */
-public class HatFilter_Test {
+public class HatFilterTest {
 
-  static final Logger LOGGER = LoggerFactory.getLogger(HatFilter_Test.class.getName());
+  static final Logger LOGGER = LoggerFactory.getLogger(HatFilterTest.class.getName());
   /**
    * The tmpdir.
    */
@@ -42,38 +49,42 @@ public class HatFilter_Test {
   private List<Point2d> input;
   private List<Point2d> lininput; // line at 45 deg
   private List<Point2d> circ; // circular object <EM>../src/test/resources/HatFilter.m</EM>
+
+  private ViewUpdater vu = Mockito.mock(ViewUpdater.class);
   /**
    * simulated protrusions
    * 
-   * % protrusions - generate test data from ../src/test/resources/HatFilter.m
+   * <p>% protrusions - generate test data from ../src/test/resources/HatFilter.m
    */
   private List<Point2d> prot;
 
   /**
-   * 
+   * Allow to get tested method name (called at setUp()).
    */
   @Rule
-  public TestName name = new TestName(); // Allow to get tested method name (called at setUp())
+  public TestName name = new TestName();
 
   /**
    * Load all data
    * 
-   * @throws Exception
+   * @throws Exception Exception
    * @see <a href="../src/test/resources/HatFilter.m">../src/test/resources/HatFilter.m</a>
    */
   @Before
   public void setUp() throws Exception {
     input = new ArrayList<>();
-    for (int i = 0; i < 40; i++)
+    for (int i = 0; i < 40; i++) {
       input.add(new Point2d(i, 0));
+    }
     input.set(18, new Point2d(18, 1));
     input.set(19, new Point2d(19, 1));
     input.set(20, new Point2d(20, 1));
     LOGGER.info("Entering " + name.getMethodName());
 
     lininput = new ArrayList<>();
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 20; i++) {
       lininput.add(new Point2d(i, i));
+    }
 
     circ = new DataLoader(
             loadResource(getClass().getClassLoader(), "testData_circle.dat").toString())
@@ -83,20 +94,13 @@ public class HatFilter_Test {
   }
 
   /**
-   * @throws Exception
-   */
-  @After
-  public void tearDown() throws Exception {
-  }
-
-  /**
-   * Test of HatSnakeFilter_.runPlugin()
+   * Test of HatSnakeFilter_.runPlugin().
    * 
-   * Pre: Ideally circular object
+   * <p>Pre: Ideally circular object
    * 
-   * Post: In logs: 1) Weighting the same, 2)circularity the same
+   * <p>Post: In logs: 1) Weighting the same, 2)circularity the same
    * 
-   * @throws QuimpPluginException
+   * @throws QuimpPluginException QuimpPluginException
    */
   @SuppressWarnings("serial")
   @Test
@@ -108,7 +112,8 @@ public class HatFilter_Test {
       {
         put("window", "5");
         put("pnum", "1");
-        put("alev", "0");
+        put("alevmin", "0.0");
+        put("alevmax", "1.0");
       }
     });
     hf.runPlugin();
@@ -117,14 +122,14 @@ public class HatFilter_Test {
   /**
    * Test of HatSnakeFilter_.runPlugin().
    * 
-   * Pre: Simulated protrusions post Logs are comparable with script
+   * <p>Pre: Simulated protrusions post Logs are comparable with script
    * ../src/test/resources/HatFilter.m After run go to folder mentioned above and run %%
    * protrusions - load java results and compare with matlab to verify results
    * 
-   * This matlab code is not fully compatible with java. Some results differ Matlab dont accept
+   * <p>This matlab code is not fully compatible with java. Some results differ Matlab dont accept
    * windows lying on beginning because they have indexes 1-max.
    * 
-   * @throws QuimpPluginException
+   * @throws QuimpPluginException QuimpPluginException
    */
   @SuppressWarnings("serial")
   @Test
@@ -136,7 +141,8 @@ public class HatFilter_Test {
       {
         put("window", "9");
         put("pnum", "3");
-        put("alev", "0");
+        put("alevmin", "0.0");
+        put("alevmax", "1.0");
       }
     });
     List<Point2d> out = hf.runPlugin();
@@ -144,14 +150,14 @@ public class HatFilter_Test {
   }
 
   /**
-   * Test of HatSnakeFilter_.runPlugin()
+   * Test of HatSnakeFilter_.runPlugin().
    * 
-   * Pre: Linear object
+   * <p>Pre: Linear object
    * 
-   * Post: In logs: 1) Weighting differ at end, 2) circularity differ at end -# Window is moving
+   * <p>Post: In logs: 1) Weighting differ at end, 2) circularity differ at end 3) Window is moving
    * and has circular padding
    * 
-   * @throws QuimpPluginException
+   * @throws QuimpPluginException QuimpPluginException
    */
   @SuppressWarnings("serial")
   @Test
@@ -163,7 +169,8 @@ public class HatFilter_Test {
       {
         put("window", "5");
         put("pnum", "1");
-        put("alev", "0");
+        put("alevmin", "0.0");
+        put("alevmax", "1.0");
       }
     });
     hf.runPlugin();
@@ -172,13 +179,13 @@ public class HatFilter_Test {
   /**
    * test set and get parameters to/from filter.
    * 
-   * Pre: given parameters
+   * <p>Pre: given parameters
    * 
-   * Post: the same parameters received from filter
+   * <p>Post: the same parameters received from filter
    * 
-   * Look at HatFilter_run for veryfing diaplaying set parameters.
+   * <p>Look at HatFilter_run for verifying displaying set parameters.
    * 
-   * @throws QuimpPluginException
+   * @throws QuimpPluginException QuimpPluginException
    */
   @SuppressWarnings("serial")
   @Test
@@ -189,21 +196,23 @@ public class HatFilter_Test {
       {
         put("window", "5");
         put("pnum", "1");
-        put("alev", "0.23");
+        put("alevmin", "0.23");
+        put("alevmax", "0.32");
       }
     });
     ParamList ret = hf.getPluginConfig();
     assertEquals(5, ret.getIntValue("Window"));
     assertEquals(1, ret.getIntValue("pnum"));
-    assertEquals(0.23, ret.getDoubleValue("alev"), 1e-4);
+    assertEquals(0.23, ret.getDoubleValue("alevmin"), 1e-4);
+    assertEquals(0.32, ret.getDoubleValue("alevmax"), 1e-4);
   }
 
   /**
-   * Input condition for HatFilter
+   * Input condition for HatFilter.
    * 
-   * Pre: Various bad combinations of inputs
+   * <p>Pre: Various bad combinations of inputs
    * 
-   * Post: Exception FilterException
+   * <p>Post: Exception FilterException
    */
   @SuppressWarnings("serial")
   @Test
@@ -215,7 +224,8 @@ public class HatFilter_Test {
         {
           put("window", "6");
           put("pnum", "3");
-          put("alev", "1.0");
+          put("alevmin", "0.0");
+          put("alevmax", "1.0");
         }
       });
       hf.runPlugin();
@@ -231,7 +241,8 @@ public class HatFilter_Test {
         {
           put("window", "-5");
           put("pnum", "3");
-          put("alev", "1.0");
+          put("alevmin", "0.0");
+          put("alevmax", "1.0");
         }
       });
       hf.runPlugin();
@@ -247,7 +258,8 @@ public class HatFilter_Test {
         {
           put("window", "600");
           put("pnum", "3");
-          put("alev", "1.0");
+          put("alevmin", "0.0");
+          put("alevmax", "1.0");
         }
       });
       hf.runPlugin();
@@ -263,7 +275,8 @@ public class HatFilter_Test {
         {
           put("window", "1");
           put("pnum", "3");
-          put("alev", "1.0");
+          put("alevmin", "0.0");
+          put("alevmax", "1.0");
         }
       });
       hf.runPlugin();
@@ -279,7 +292,8 @@ public class HatFilter_Test {
         {
           put("window", "5");
           put("pnum", "0");
-          put("alev", "1.0");
+          put("alevmin", "0.0");
+          put("alevmax", "1.0");
         }
       });
       hf.runPlugin();
@@ -295,7 +309,8 @@ public class HatFilter_Test {
         {
           put("window", "5");
           put("pnum", "3");
-          put("alev", "-1.0");
+          put("alevmin", "0.0");
+          put("alevmax", "-1.0");
         }
       });
       hf.runPlugin();
@@ -311,7 +326,8 @@ public class HatFilter_Test {
         {
           put("window", "6");
           put("pnum", "-4");
-          put("alev", "1.0");
+          put("alevmin", "0.0");
+          put("alevmax", "1.0");
         }
       });
       hf.runPlugin();
@@ -323,11 +339,11 @@ public class HatFilter_Test {
   }
 
   /**
-   * Test of WindowIndRange class
+   * Test of WindowIndRange class.
    * 
-   * Pre: Separated ranges of indexes
+   * <p>Pre: Separated ranges of indexes
    * 
-   * Post: All ranges are added to list
+   * <p>Post: All ranges are added to list
    */
   @Test
   public void testWindowIndRange_1() {
@@ -339,11 +355,11 @@ public class HatFilter_Test {
   }
 
   /**
-   * Test of WindowIndRange class
+   * Test of WindowIndRange class.
    * 
-   * Pre: Overlap ranges of indexes
+   * <p>Pre: Overlap ranges of indexes
    * 
-   * Post: Overlap ranges are not added to list
+   * <p>Post: Overlap ranges are not added to list
    */
   @Test
   public void testWindowIndRange_2() {
@@ -363,7 +379,7 @@ public class HatFilter_Test {
 
   /**
    * Test of WindowIndRange class Test if particular point is included in any range stored in
-   * TreeSet
+   * TreeSet.
    */
   @Test
   public void testWindowIndRange_3() {
@@ -377,6 +393,32 @@ public class HatFilter_Test {
     assertFalse(p.contains(new WindowIndRange(11, 11)));
 
     LOGGER.debug(p.toString());
+  }
+
+  /**
+   * Test view updater.
+   * 
+   * @throws Exception Exception
+   */
+  @Test
+  public void test_ApplyButton() throws Exception {
+    HatSnakeFilter_ in = new HatSnakeFilter_();
+    in.attachData(prot);
+    in.attachContext(vu);
+    in.actionPerformed(new ActionEvent(new JButton(), 0, "apply"));
+    Mockito.verify(vu, Mockito.times(1)).updateView();
+  }
+
+  /**
+   * Test of about string.
+   * 
+   * @throws Exception Exception
+   */
+  @Test
+  public void test_GetVersion() throws Exception {
+    HatSnakeFilter_ in = new HatSnakeFilter_();
+    String ret = in.getVersion();
+    assertThat(in, is(not(ret.isEmpty())));
   }
 
 }

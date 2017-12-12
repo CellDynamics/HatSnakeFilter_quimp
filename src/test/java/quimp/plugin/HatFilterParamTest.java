@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,29 +25,31 @@ import com.github.celldynamics.quimp.utils.test.RoiSaver;
 /**
  * Parameterised test for HatFilter
  * 
- * Generates images of processed data as well as images of original data. Those can be viewed in
+ * <p>Generates images of processed data as well as images of original data. Those can be viewed in
  * <EM>../src/test/resources/HatFilter.m</EM>
+ * 
+ * <p>Note that test are for old version (below 1.10)
  * 
  * @author p.baniukiewicz
  *
  */
 @RunWith(Parameterized.class)
-public class HatFilter_Param_Test {
-  static final Logger LOGGER = LoggerFactory.getLogger(HatFilter_Param_Test.class.getName());
+public class HatFilterParamTest {
+  static final Logger LOGGER = LoggerFactory.getLogger(HatFilterParamTest.class.getName());
   /**
    * The tmpdir.
    */
   static String tmpdir = System.getProperty("java.io.tmpdir") + File.separator;
   private Integer window;
   private Integer pnum;
-  private Double alev;
+  private Double alevmax;
   private List<Point2d> testcase;
   private Path testfileName;
 
   /**
    * Parameterized constructor.
    * 
-   * Each parameter should be placed as an argument here Every time runner triggers, it will pass
+   * <p>Each parameter should be placed as an argument here Every time runner triggers, it will pass
    * the arguments from parameters we defined to this method
    * 
    * @param testFileName test file name
@@ -58,30 +59,23 @@ public class HatFilter_Param_Test {
    * @see DataLoader
    * @see HatSnakeFilter_
    */
-  public HatFilter_Param_Test(String testFileName, Integer window, Integer pnum, Double alev) {
+  public HatFilterParamTest(String testFileName, Integer window, Integer pnum, Double alev) {
     this.testfileName = Paths.get(testFileName);
     this.window = window;
     this.pnum = pnum;
-    this.alev = alev;
+    this.alevmax = alev;
   }
 
   /**
-   * Called after construction but before tests
+   * Called after construction but before tests.
    * 
-   * @throws Exception
+   * @throws Exception Exception
    */
   @Before
   public void setUp() throws Exception {
     String tf = testfileName.getFileName().toString();
     testcase = new DataLoader(loadResource(getClass().getClassLoader(), tf).toString())
             .getListofPoints();
-  }
-
-  /**
-   * @throws java.lang.Exception
-   */
-  @After
-  public void tearDown() throws Exception {
   }
 
   /**
@@ -102,11 +96,11 @@ public class HatFilter_Param_Test {
   /**
    * Test of getInterpolationLoess method
    * 
-   * Pre: Real cases extracted from
+   * <p>Pre: Real cases extracted from
    * 
-   * Post: Save image test_HatFilter_* in /tmp/
+   * <p>Post: Save image test_HatFilter_* in /tmp/
    * 
-   * @throws QuimpPluginException
+   * @throws QuimpPluginException QuimpPluginException
    * @see <a
    *      href="verification of logs (ratios, indexes, etc)">QuimP-toolbox/Prototyping/59-Shape_filtering/HatFilter.m</a>
    * @see <a href="resorces">/src/test/resources/HatFilter.m</a>
@@ -122,12 +116,13 @@ public class HatFilter_Param_Test {
       {
         put("window", String.valueOf(window));
         put("pnum", String.valueOf(pnum));
-        put("alev", String.valueOf(alev));
+        put("alevmax", String.valueOf(alevmax));
+        put("alevmin", String.valueOf(0.0));
       }
     });
     out = hf.runPlugin();
     RoiSaver.saveRoi(tmpdir + "test_HatFilter_" + testfileName.getFileName() + "_"
-            + window.toString() + "_" + pnum.toString() + "_" + alev.toString() + ".tif", out);
+            + window.toString() + "_" + pnum.toString() + "_" + alevmax.toString() + ".tif", out);
     LOGGER.debug("setUp: " + testcase.toString());
   }
 
@@ -135,13 +130,14 @@ public class HatFilter_Param_Test {
    * Simple test of RoiSaver class, create reference images without processing but with the same
    * name scheme as processed data.
    * 
-   * Post: Save image in /tmp
+   * <p>Post: Save image in /tmp
    * 
    * @see <a href="resorces">/src/test/resources/HatFilter.m</a>
    */
   @Test
   public void test_roiSaver() {
     RoiSaver.saveRoi(tmpdir + "ref_HatFilter_" + testfileName.getFileName() + "_"
-            + window.toString() + "_" + pnum.toString() + "_" + alev.toString() + ".tif", testcase);
+            + window.toString() + "_" + pnum.toString() + "_" + alevmax.toString() + ".tif",
+            testcase);
   }
 }
