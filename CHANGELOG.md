@@ -1,5 +1,8 @@
 # Change Log
 
+## [v1.1.0](https://github.com/CellDynamics/HatSnakeFilter_quimp/tree/v1.1.0) (2018-01-23)
+[Full Changelog](https://github.com/CellDynamics/HatSnakeFilter_quimp/compare/v1.0.10...v1.1.0)
+
 ## [v1.0.10](https://github.com/CellDynamics/HatSnakeFilter_quimp/tree/v1.0.10) (2017-06-16)
 [Full Changelog](https://github.com/CellDynamics/HatSnakeFilter_quimp/compare/v1.0.9...v1.0.10)
 
